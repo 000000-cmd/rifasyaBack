@@ -14,6 +14,8 @@ public interface ListDocumentTypeRepository extends JpaRepository<ListDocumentTy
     @Override
     Optional<ListDocumentType> findById(UUID uuid);
 
+    Optional<ListDocumentType> findByCode(String code);
+
     @Override
     boolean existsById(UUID uuid);
 

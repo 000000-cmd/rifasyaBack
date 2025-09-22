@@ -2,13 +2,13 @@ package org.rifasya.main.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.rifasya.main.entities.Attachment;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class UserResponseDTO {
 
     private UUID id;
@@ -17,6 +17,23 @@ public class UserResponseDTO {
     private String mail;
     private Boolean indicatorEnabled;
     private LocalDateTime auditDate;
+    private Attachment Attachment;
+
+    public UserResponseDTO(UUID id,
+                           String user,
+                           String cellular,
+                           String mail,
+                           Boolean indicatorEnabled,
+                           LocalDateTime auditDate,
+                           Attachment attachment) {
+        this.id = id;
+        this.user = user;
+        this.cellular = cellular;
+        this.mail = mail;
+        this.indicatorEnabled = indicatorEnabled;
+        this.auditDate = auditDate;
+        Attachment = attachment;
+    }
 
     public UUID getId() {
         return id;
@@ -65,4 +82,8 @@ public class UserResponseDTO {
     public void setAuditDate(LocalDateTime auditDate) {
         this.auditDate = auditDate;
     }
+
+    public Attachment getAttachment() {return Attachment;}
+
+    public void setAttachment(Attachment attachment) {Attachment = attachment;}
 }

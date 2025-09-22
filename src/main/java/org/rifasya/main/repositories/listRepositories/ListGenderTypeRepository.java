@@ -15,6 +15,8 @@ public interface ListGenderTypeRepository extends JpaRepository<ListGenderType, 
     @Override
     Optional<ListGenderType> findById(UUID uuid);
 
+    Optional<ListGenderType> findByCode(String Code);
+
     @Override
     boolean existsById(UUID uuid);
 

@@ -17,6 +17,7 @@ public class UserRequestDTO {
     private String cellular;
     private String mail;
     private UUID userAuditId;
+    private byte[] Attachment;
 
     // getters y setters manuales
     public String getUser() { return user; }
@@ -29,4 +30,6 @@ public class UserRequestDTO {
     public void setMail(String mail) { this.mail = mail; }
     public UUID getUserAuditId() { return userAuditId; }
     public void setUserAuditId(UUID userAuditId) { this.userAuditId = userAuditId; }
+    public byte[] getAttachment() {return Attachment;}
+    public void setAttachment(byte[] attachment) {Attachment = attachment;}
 }

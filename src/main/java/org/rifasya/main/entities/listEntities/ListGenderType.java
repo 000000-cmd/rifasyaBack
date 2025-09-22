@@ -10,8 +10,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "listgendertypes")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -42,4 +40,59 @@ public class ListGenderType {
     @Column(name = "AuditDate", nullable = false)
     private LocalDateTime auditDate;
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+
+    public Boolean getIndicatorEnabled() {
+        return indicatorEnabled;
+    }
+
+    public void setIndicatorEnabled(Boolean indicatorEnabled) {
+        this.indicatorEnabled = indicatorEnabled;
+    }
+
+    public User getUserAudit() {
+        return userAudit;
+    }
+
+    public void setUserAudit(User userAudit) {
+        this.userAudit = userAudit;
+    }
+
+    public LocalDateTime getAuditDate() {
+        return auditDate;
+    }
+
+    public void setAuditDate(LocalDateTime auditDate) {
+        this.auditDate = auditDate;
+    }
 }

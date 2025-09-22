@@ -41,15 +41,16 @@ public class User {
     @Column(name = "AuditDate", nullable = false)
     private LocalDateTime auditDate;
 
-    @Column(name = "IdAttachment")
-    private UUID idAttachmentId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "IdAttachment")
+    private Attachment Attachment;
 
     public User() {
     }
 
     // Constructor personalizado para creación de usuario
     public User(UUID id, String user, String password, String cellular, String mail,
-                Boolean indicatorEnabled, User userAudit, LocalDateTime auditDate, UUID idAttachmentId) {
+                Boolean indicatorEnabled, User userAudit, LocalDateTime auditDate, Attachment Attachment) {
         this.id = id;
         this.user = user;
         this.password = password;
@@ -58,7 +59,7 @@ public class User {
         this.indicatorEnabled = indicatorEnabled;
         this.userAudit = userAudit;
         this.auditDate = auditDate;
-        this.idAttachmentId = idAttachmentId;
+        this.Attachment = Attachment;
     }
 
     public UUID getId() {
@@ -125,11 +126,11 @@ public class User {
         this.auditDate = auditDate;
     }
 
-    public UUID getIdAttachmentId() {
-        return idAttachmentId;
+    public Attachment getAttachment() {
+        return Attachment;
     }
 
-    public void setIdAttachmentId(UUID idAttachmentId) {
-        this.idAttachmentId = idAttachmentId;
+    public void setAttachment(Attachment idAttachment) {
+        this.Attachment = idAttachment;
     }
 }
