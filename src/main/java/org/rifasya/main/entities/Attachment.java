@@ -20,7 +20,7 @@ public class Attachment {
     @Column(name = "FileName", nullable = false)
     private String fileName;
 
-    @Column(name = "EncryptedData", nullable = true)
+    @Column(name = "EncryptedData")
     private byte[] encryptedData;
 
     @Column(name = "IndicatorEnabled", nullable = false)

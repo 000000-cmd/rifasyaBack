@@ -18,7 +18,7 @@ public class ThirdParty {
 
     @Id
     @EqualsAndHashCode.Include
-    @Column(name = "IdThirdParty")
+    @Column(name = "IdThirdParty", nullable = false)
     private UUID id;
 
     @Column(name = "FirstName", nullable = false)
@@ -41,7 +41,7 @@ public class ThirdParty {
     private ListDocumentType documentType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IdGenderType", nullable = false)
+    @JoinColumn(name = "IdGenderType")
     private ListGenderType genderType;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -78,6 +78,12 @@ public class ThirdParty {
         this.indicatorEnabled = indicatorEnabled;
         this.userAudit = userAudit;
         this.auditDate = auditDate;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.auditDate = LocalDateTime.now();
+        this.indicatorEnabled = true;
     }
 
     // Getters y setters

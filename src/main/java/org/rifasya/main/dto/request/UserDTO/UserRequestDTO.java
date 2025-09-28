@@ -1,23 +1,20 @@
-package org.rifasya.main.dto.request;
+package org.rifasya.main.dto.request.UserDTO;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import org.rifasya.main.entities.User;
 
 import java.util.UUID;
 
 public class UserRequestDTO {
 
+    @NotBlank
     private String user;
+
+    @NotBlank
     private String password;
     private String cellular;
     private String mail;
     private UUID userAuditId;
-    private byte[] Attachment;
+    private byte[] attachment;
 
     // getters y setters manuales
     public String getUser() { return user; }
@@ -30,6 +27,7 @@ public class UserRequestDTO {
     public void setMail(String mail) { this.mail = mail; }
     public UUID getUserAuditId() { return userAuditId; }
     public void setUserAuditId(UUID userAuditId) { this.userAuditId = userAuditId; }
-    public byte[] getAttachment() {return Attachment;}
-    public void setAttachment(byte[] attachment) {Attachment = attachment;}
+    public byte[] getAttachment() {return attachment;}
+    public void setAttachment(byte[] attachment) {
+        this.attachment = attachment;}
 }

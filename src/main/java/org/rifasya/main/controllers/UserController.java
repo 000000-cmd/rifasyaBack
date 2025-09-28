@@ -1,9 +1,9 @@
 package org.rifasya.main.controllers;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.rifasya.main.dto.request.UserRequestDTO;
-import org.rifasya.main.dto.response.UserResponseDTO;
+import org.rifasya.main.dto.request.UserDTO.EmbeddedUserRequestDTO;
+import org.rifasya.main.dto.request.UserDTO.UserRequestDTO;
+import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
 import org.rifasya.main.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +22,11 @@ public class UserController {
         this.userService = userService;
     }
 
-    // Crear usuario
     @PostMapping("/create")
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody EmbeddedUserRequestDTO userRequestDTO) {
+        // Permite crear un usuario de forma independiente
         UserResponseDTO createdUser = userService.createUser(userRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 }
+

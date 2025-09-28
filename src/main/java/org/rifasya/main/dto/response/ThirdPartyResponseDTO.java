@@ -4,57 +4,31 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.rifasya.main.entities.User;
-import org.rifasya.main.entities.listEntities.ListDocumentType;
-import org.rifasya.main.entities.listEntities.ListGenderType;
-import org.rifasya.main.repositories.UserRepository;
+import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 
+
 @NoArgsConstructor
+@AllArgsConstructor
 public class ThirdPartyResponseDTO {
+    private UUID Id;
+    private String DocumentNumber;
+    private String FirstName;
+    private String FirstLastName;
+    private String SecondLastName;
+    private String SecondName;
+    private String DocumentType;
+    private String GenderType;
+    private UserResponseDTO User;
 
-    private UUID IdThirdParty;
-    String DocumentType;
-    String DocumentNumber;
-    String FirstName;
-    String SecondName;
-    String FirstLastName;
-    String SecondLastName;
-    String GenderType;
-    UUID User;
-    Boolean IndicatorEnabled;
-
-    public ThirdPartyResponseDTO(UUID idThirdParty,
-                                 String documentType,
-                                 String documentNumber,
-                                 String firstName,
-                                 String secondName,
-                                 String firstLastName,
-                                 String secondLastName,
-                                 String genderType,
-                                 UUID user,
-                                 Boolean indicatorEnabled) {
-        IdThirdParty = idThirdParty;
-        DocumentType = documentType;
-        DocumentNumber = documentNumber;
-        FirstName = firstName;
-        SecondName = secondName;
-        FirstLastName = firstLastName;
-        SecondLastName = secondLastName;
-        GenderType = genderType;
-        User = user;
-        IndicatorEnabled = indicatorEnabled;
+    public UUID getId() {
+        return Id;
     }
 
-    public UUID getIdThirdParty() {
-        return IdThirdParty;
-    }
-
-    public void setIdThirdParty(UUID idThirdParty) {
-        IdThirdParty = idThirdParty;
+    public void setId(UUID id) {
+        Id = id;
     }
 
     public String getDocumentNumber() {
@@ -65,14 +39,6 @@ public class ThirdPartyResponseDTO {
         DocumentNumber = documentNumber;
     }
 
-    public String getFirstLastName() {
-        return FirstLastName;
-    }
-
-    public void setFirstLastName(String firstLastName) {
-        FirstLastName = firstLastName;
-    }
-
     public String getFirstName() {
         return FirstName;
     }
@@ -81,12 +47,12 @@ public class ThirdPartyResponseDTO {
         FirstName = firstName;
     }
 
-    public Boolean getIndicatorEnabled() {
-        return IndicatorEnabled;
+    public String getFirstLastName() {
+        return FirstLastName;
     }
 
-    public void setIndicatorEnabled(Boolean indicatorEnabled) {
-        IndicatorEnabled = indicatorEnabled;
+    public void setFirstLastName(String firstLastName) {
+        FirstLastName = firstLastName;
     }
 
     public String getSecondLastName() {
@@ -121,11 +87,11 @@ public class ThirdPartyResponseDTO {
         GenderType = genderType;
     }
 
-    public UUID getUser() {
+    public UserResponseDTO getUser() {
         return User;
     }
 
-    public void setUser(UUID user) {
+    public void setUser(UserResponseDTO user) {
         User = user;
     }
 }

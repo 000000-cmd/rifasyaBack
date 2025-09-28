@@ -1,14 +1,19 @@
-package org.rifasya.main.dto.request;
+package org.rifasya.main.models;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.rifasya.main.dto.request.UserDTO.EmbeddedUserRequestDTO;
+import lombok.Setter;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class ThirdPartyRequestDTO {
+public class ThirdPartyModel {
+
+    private UUID id;
+
     @NotBlank
     private String firstName;
     private String secondName;
@@ -23,9 +28,16 @@ public class ThirdPartyRequestDTO {
     @NotBlank
     private String documentCode;
     private String genderCode;
+    private UserModel user;
 
-    @Valid
-    private EmbeddedUserRequestDTO user;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public @NotBlank String getFirstName() {
         return firstName;
@@ -83,12 +95,11 @@ public class ThirdPartyRequestDTO {
         this.genderCode = genderCode;
     }
 
-    public @Valid EmbeddedUserRequestDTO getUser() {
+    public UserModel getUser() {
         return user;
     }
 
-    public void setUser(@Valid EmbeddedUserRequestDTO user) {
+    public void setUser(UserModel user) {
         this.user = user;
     }
 }
-

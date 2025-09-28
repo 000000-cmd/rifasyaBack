@@ -3,15 +3,14 @@ package org.rifasya.main.services;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.rifasya.main.dto.request.UserRequestDTO;
-import org.rifasya.main.dto.response.UserResponseDTO;
+import org.rifasya.main.dto.request.UserDTO.EmbeddedUserRequestDTO;
+import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
 import org.rifasya.main.entities.User;
+import org.rifasya.main.mappers.UserMapper;
+import org.rifasya.main.models.UserModel;
 import org.rifasya.main.repositories.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -20,51 +19,49 @@ public class UserService {
 
     private final UserRepository userRepo;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepo) {
+    public UserService(UserRepository userRepo, UserMapper userMapper) {
         this.userRepo = userRepo;
+        this.userMapper = userMapper;
     }
 
     @Transactional
-    public UserResponseDTO createUser (UserRequestDTO userRequestDTO) {
-        User user = userRepo.save(Objects.requireNonNull(UserDTOToUserEntity(userRequestDTO)));
-        if (user == null) { return null; }
+    public UserResponseDTO createUser(EmbeddedUserRequestDTO userRequestDTO) {
 
-        return UserEntityToResponseDTO(user);
-    }
+        // 1️⃣ DTO -> Model
+        UserModel userModel = userMapper.requestToModel(userRequestDTO);
+        userModel.setId(UUID.randomUUID());
 
-    // Conversión de UserRequestDTO a User
-    private User UserDTOToUserEntity(UserRequestDTO userReqDTO) {
-        User user = new User(UUID.randomUUID(),
-                userReqDTO.getUser(),
-                passwordEncoder.encode(userReqDTO.getPassword()),
-                userReqDTO.getCellular(),
-                userReqDTO.getMail(),
-                true,
-                null,
-                LocalDateTime.now(),
-                null);
+        // 2️⃣ Model -> Entity
+        User userEntity = userMapper.modelToEntity(userModel);
 
-        // Cargar usuario auditor desde el repositorio si existe
-        if (userReqDTO.getUserAuditId() != null) {
-            User auditor = userRepo.findById(userReqDTO.getUserAuditId())
-                    .orElseThrow(() -> new RuntimeException("Usuario auditor no encontrado"));
-            user.setUserAudit(auditor);
+        // 3️⃣ Codificar password
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+
+        // 4️⃣ Asignar auditor
+        if (userModel.getId() != null) {
+            User auditor = userRepo.findById(userModel.getId())
+                    .orElse(userEntity); // si no existe, se asigna a sí mismo
+            userEntity.setUserAudit(auditor);
         } else {
-            // Si no se pasa auditor, se asigna a sí mismo
-            user.setUserAudit(user);
+            userEntity.setUserAudit(userEntity);
         }
-        return user;
+
+        // 5️⃣ Guardar en BD
+        userEntity = userRepo.save(userEntity);
+
+        // 6️⃣ Entity -> Model -> ResponseDTO
+        userModel = userMapper.entityToModel(userEntity);
+        return userMapper.modelToResponseDTO(userModel);
     }
 
-    private UserResponseDTO UserEntityToResponseDTO(User user) {
-        return new UserResponseDTO(user.getId(),
-                user.getUser(),
-                user.getCellular(),
-                user.getMail(),
-                user.getIndicatorEnabled(),
-                LocalDateTime.now(),
-                user.getAttachment()
-        );
+    // Método auxiliar para persistir UserModel directamente
+    @Transactional
+    public User saveUser(UserModel userModel) {
+        User userEntity = userMapper.modelToEntity(userModel);
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+        userEntity = userRepo.save(userEntity);
+        return userEntity;
     }
 }

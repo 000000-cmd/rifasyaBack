@@ -62,6 +62,12 @@ public class User {
         this.Attachment = Attachment;
     }
 
+    @PrePersist
+    protected void onCreate() {
+        this.auditDate = LocalDateTime.now();
+        this.indicatorEnabled = true;
+    }
+
     public UUID getId() {
         return id;
     }
