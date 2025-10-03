@@ -34,4 +34,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Override
     void deleteAll();
+
+    Optional<User> findByUser(String username);
+
+    Optional<User> findByMail(String mail);
 }
