@@ -1,6 +1,7 @@
 package org.rifasya.main.repositories;
 
 import org.rifasya.main.entities.ThirdParty;
+import org.rifasya.main.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -33,4 +34,6 @@ public interface ThirdPartyRepository extends JpaRepository<ThirdParty, UUID> {
 
     @Override
     void deleteAll();
+
+    Optional<ThirdParty> findByUser(User user);
 }
