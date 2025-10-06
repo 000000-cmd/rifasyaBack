@@ -56,7 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/lists/**").permitAll()
                         .requestMatchers("/api/thirdparty/create").permitAll()
-                        .anyRequest().authenticated() // todo lo demás protegido
+                        .anyRequest().authenticated()
                 )
 
                 // 🔹 Autenticación con sesiones deshabilitadas (solo JWT)

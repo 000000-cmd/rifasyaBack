@@ -5,6 +5,7 @@ import org.rifasya.main.mappers.ListTypeMapper;
 import org.rifasya.main.models.ListItemModel;
 import org.rifasya.main.repositories.listRepositories.ListDocumentTypeRepository;
 import org.rifasya.main.repositories.listRepositories.ListGenderTypeRepository;
+import org.rifasya.main.repositories.listRepositories.ListRoleTypeRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,11 +19,13 @@ public class ListController {
     private final ListDocumentTypeRepository docTypeRepo;
     private final ListGenderTypeRepository genderTypeRepo;
     private final ListTypeMapper listTypeMapper;
+    private final ListRoleTypeRepository roleTypeRepo;
 
-    ListController(ListDocumentTypeRepository docTypeRepo, ListGenderTypeRepository genderTypeRepo, ListTypeMapper listTypeMapper){
+    ListController(ListDocumentTypeRepository docTypeRepo, ListGenderTypeRepository genderTypeRepo, ListTypeMapper listTypeMapper, ListRoleTypeRepository roleTypeRepo){
         this.docTypeRepo = docTypeRepo;
         this.genderTypeRepo = genderTypeRepo;
         this.listTypeMapper = listTypeMapper;
+        this.roleTypeRepo = roleTypeRepo;
     }
 
     @GetMapping("/documenttypes")
@@ -34,4 +37,11 @@ public class ListController {
     public List<ListItemModel> getGenderTypes() {
         return listTypeMapper.toListItemModelsGender(genderTypeRepo.findAll());
     }
+
+    @GetMapping("/roletypes")
+    public List<ListItemModel> getRoleTypes() {
+        // Necesitarás añadir un método en ListTypeMapper para convertir ListRoleType a ListItemModel
+        return listTypeMapper.toListItemModelsRole(roleTypeRepo.findAll());
+    }
+
 }

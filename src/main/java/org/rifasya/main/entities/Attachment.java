@@ -7,30 +7,38 @@ import lombok.EqualsAndHashCode;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "Attachments")
+@Table(name = "attachments")
 public class Attachment {
 
     @Id
-    @EqualsAndHashCode.Include
     @Column(name = "IdAttachment")
-    private UUID idAttachment;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-    @Column(name = "FileName", nullable = false)
+    @Column(name = "FileName")
     private String fileName;
 
-    @Column(name = "EncryptedData")
-    private byte[] encryptedData;
+    @Column(name = "ContentType")
+    private String contentType;
 
-    @Column(name = "IndicatorEnabled", nullable = false)
-    private Boolean indicatorEnabled;
+    @Lob
+    @Column(name = "Data", columnDefinition="LONGBLOB")
+    private byte[] data;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "UserAudit")
-    @JsonIgnoreProperties({"userAudit"}) // evita bucles infinitos al serializar
-    private User userAudit;
+    @OneToOne
+    @JoinColumn(name = "IdUser", referencedColumnName = "IdUser")
+    private User user;
 
-    @Column(name = "AuditDate", nullable = false)
-    private LocalDateTime auditDate;
+    // Getters y Setters
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public String getFileName() { return fileName; }
+    public void setFileName(String fileName) { this.fileName = fileName; }
+    public String getContentType() { return contentType; }
+    public void setContentType(String contentType) { this.contentType = contentType; }
+    public byte[] getData() { return data; }
+    public void setData(byte[] data) { this.data = data; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }

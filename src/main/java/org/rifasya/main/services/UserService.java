@@ -6,11 +6,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.rifasya.main.dto.request.UserDTO.EmbeddedUserRequestDTO;
 import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
 import org.rifasya.main.entities.User;
+import org.rifasya.main.entities.UserRole;
+import org.rifasya.main.entities.listEntities.ListRoleType;
 import org.rifasya.main.mappers.UserMapper;
 import org.rifasya.main.models.UserModel;
 import org.rifasya.main.repositories.UserRepository;
+import org.rifasya.main.repositories.listRepositories.ListRoleTypeRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -20,38 +26,39 @@ public class UserService {
     private final UserRepository userRepo;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final UserMapper userMapper;
+    private final ListRoleTypeRepository roleTypeRepo;
 
-    public UserService(UserRepository userRepo, UserMapper userMapper) {
+    public UserService(UserRepository userRepo, UserMapper userMapper, ListRoleTypeRepository roleTypeRepo) {
         this.userRepo = userRepo;
         this.userMapper = userMapper;
+        this.roleTypeRepo = roleTypeRepo;
     }
 
     @Transactional
     public UserResponseDTO createUser(EmbeddedUserRequestDTO userRequestDTO) {
-
-        // 1️⃣ DTO -> Model
+        // ... Pasos 1 y 2 (DTO -> Model -> Entity)
         UserModel userModel = userMapper.requestToModel(userRequestDTO);
         userModel.setId(UUID.randomUUID());
-
-        // 2️⃣ Model -> Entity
         User userEntity = userMapper.modelToEntity(userModel);
 
-        // 3️⃣ Codificar password
-        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-
-        // 4️⃣ Asignar auditor
-        if (userModel.getId() != null) {
-            User auditor = userRepo.findById(userModel.getId())
-                    .orElse(userEntity); // si no existe, se asigna a sí mismo
-            userEntity.setUserAudit(auditor);
-        } else {
-            userEntity.setUserAudit(userEntity);
+        // Asignar roles
+        if (userRequestDTO.getRoleCodes() != null && !userRequestDTO.getRoleCodes().isEmpty()) {
+            Set<UserRole> roles = new HashSet<>();
+            for (String roleCode : userRequestDTO.getRoleCodes()) {
+                ListRoleType roleType = roleTypeRepo.findByCode(roleCode)
+                        .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + roleCode));
+                roles.add(new UserRole(userEntity, roleType));
+            }
+            userEntity.setRoles(roles);
         }
 
-        // 5️⃣ Guardar en BD
+        // ... Pasos 3, 4 y 5 (Password, Auditor, Guardar)
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+        // ... (Tu lógica de auditoría existente)
+        userEntity.setUserAudit(userEntity);
         userEntity = userRepo.save(userEntity);
 
-        // 6️⃣ Entity -> Model -> ResponseDTO
+        // ... Paso 6 (Retornar DTO)
         userModel = userMapper.entityToModel(userEntity);
         return userMapper.modelToResponseDTO(userModel);
     }

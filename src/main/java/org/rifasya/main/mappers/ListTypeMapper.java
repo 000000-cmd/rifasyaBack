@@ -6,6 +6,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.rifasya.main.entities.listEntities.ListDocumentType;
 import org.rifasya.main.entities.listEntities.ListGenderType;
+import org.rifasya.main.entities.listEntities.ListRoleType;
 import org.rifasya.main.models.ListItemModel;
 import org.rifasya.main.repositories.listRepositories.ListDocumentTypeRepository;
 import org.rifasya.main.repositories.listRepositories.ListGenderTypeRepository;
@@ -71,6 +72,16 @@ public interface ListTypeMapper {
     }
 
     default List<ListItemModel> toListItemModelsGender(List<ListGenderType> entities) {
+        if (entities == null) return null;
+        return entities.stream().map(this::toListItemModel).toList();
+    }
+
+    default ListItemModel toListItemModel(ListRoleType entity) {
+        if (entity == null) return null;
+        return new ListItemModel(entity.getCode(), entity.getOrder(), entity.getName());
+    }
+
+    default List<ListItemModel> toListItemModelsRole(List<ListRoleType> entities) {
         if (entities == null) return null;
         return entities.stream().map(this::toListItemModel).toList();
     }

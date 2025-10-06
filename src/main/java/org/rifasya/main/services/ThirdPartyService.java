@@ -3,6 +3,7 @@ package org.rifasya.main.services;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.rifasya.main.dto.request.ThirdPartyRequestDTO;
+import org.rifasya.main.dto.request.UserDTO.EmbeddedUserRequestDTO;
 import org.rifasya.main.dto.response.ThirdPartyResponseDTO;
 import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
 import org.rifasya.main.entities.ThirdParty;
@@ -48,8 +49,11 @@ public class ThirdPartyService {
     @Transactional
     public ThirdPartyResponseDTO create(ThirdPartyRequestDTO dto) {
 
-        // 1️⃣ Crear usuario usando UserService
-        UserResponseDTO userResponse = userService.createUser(dto.getUser());
+        EmbeddedUserRequestDTO userDto = dto.getUser();
+        userDto.setRoleCodes(java.util.Collections.singletonList("TERUSU"));
+
+        // 1️⃣ Crear usuario usando UserService (ahora asignará el rol)
+        UserResponseDTO userResponse = userService.createUser(userDto);
         User userEntity = userMapper.responseToEntity(userResponse);
 
         // 2️⃣ DTO -> Model de tercero

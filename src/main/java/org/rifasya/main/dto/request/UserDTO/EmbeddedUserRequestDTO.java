@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,6 +20,8 @@ public class EmbeddedUserRequestDTO {
     private String mail;
 
     private String cellular;
+
+    private List<String> roleCodes;
 
     public @NotBlank String getUser() {
         return user;
@@ -49,5 +53,13 @@ public class EmbeddedUserRequestDTO {
 
     public void setCellular(String cellular) {
         this.cellular = cellular;
+    }
+
+    public List<String> getRoleCodes() {
+        return roleCodes;
+    }
+
+    public void setRoleCodes(List<String> roleCodes) {
+        this.roleCodes = roleCodes;
     }
 }

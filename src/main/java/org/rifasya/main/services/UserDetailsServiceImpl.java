@@ -3,10 +3,13 @@ package org.rifasya.main.services;
 
 import org.rifasya.main.entities.User;
 import org.rifasya.main.repositories.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -18,18 +21,22 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        // Buscar por username o email
         User user = userRepository.findByUser(usernameOrEmail)
                 .or(() -> userRepository.findByMail(usernameOrEmail))
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + usernameOrEmail));
 
-        // Convertir a UserDetails
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUser())
-                .password(user.getPassword())
-                .roles("USER")
-                .build();
+        // Mapear roles a GrantedAuthority
+        var authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getRole().getCode()))
+                .collect(Collectors.toSet());
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getUser(),
+                user.getPassword(),
+                authorities
+        );
     }
 }
 

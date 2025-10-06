@@ -1,142 +1,60 @@
 package org.rifasya.main.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
-
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "users")
+@Table(name = "users") // Asumo el nombre de la tabla "users"
 public class User {
 
     @Id
-    @EqualsAndHashCode.Include
-    @Column(name = "IdUser")
+    @Column(name = "IdUser") // Corregido
     private UUID id;
 
-    @Column(name = "`User`", nullable = false, unique = true)
+    @Column(name = "Username", nullable = false, unique = true)
     private String user;
 
     @Column(name = "Password", nullable = false)
     private String password;
 
-    @Column(name = "Cellular", unique = true)
-    private String cellular;
-
-    @Column(name = "Mail", unique = true)
+    @Column(name = "Mail", nullable = false, unique = true)
     private String mail;
 
-    @Column(name = "IndicatorEnabled", nullable = false)
-    private Boolean indicatorEnabled;
+    @Column(name = "Cellular")
+    private String cellular;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "UserAudit")
-    @JsonIgnoreProperties({"userAudit"}) // evita bucles infinitos al serializar
+    @JoinColumn(name = "IdUserAudit", referencedColumnName = "IdUser") // Corregido
     private User userAudit;
 
     @Column(name = "AuditDate", nullable = false)
-    private LocalDateTime auditDate;
+    private LocalDateTime auditDate = LocalDateTime.now();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IdAttachment")
-    private Attachment Attachment;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Attachment attachment;
 
-    public User() {
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<UserRole> roles;
 
-    // Constructor personalizado para creación de usuario
-    public User(UUID id, String user, String password, String cellular, String mail,
-                Boolean indicatorEnabled, User userAudit, LocalDateTime auditDate, Attachment Attachment) {
-        this.id = id;
-        this.user = user;
-        this.password = password;
-        this.cellular = cellular;
-        this.mail = mail;
-        this.indicatorEnabled = indicatorEnabled;
-        this.userAudit = userAudit;
-        this.auditDate = auditDate;
-        this.Attachment = Attachment;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.auditDate = LocalDateTime.now();
-        this.indicatorEnabled = true;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getCellular() {
-        return cellular;
-    }
-
-    public void setCellular(String cellular) {
-        this.cellular = cellular;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
-
-    public Boolean getIndicatorEnabled() {
-        return indicatorEnabled;
-    }
-
-    public void setIndicatorEnabled(Boolean indicatorEnabled) {
-        this.indicatorEnabled = indicatorEnabled;
-    }
-
-    public User getUserAudit() {
-        return userAudit;
-    }
-
-    public void setUserAudit(User userAudit) {
-        this.userAudit = userAudit;
-    }
-
-    public LocalDateTime getAuditDate() {
-        return auditDate;
-    }
-
-    public void setAuditDate(LocalDateTime auditDate) {
-        this.auditDate = auditDate;
-    }
-
-    public Attachment getAttachment() {
-        return Attachment;
-    }
-
-    public void setAttachment(Attachment idAttachment) {
-        this.Attachment = idAttachment;
-    }
+    // Getters y Setters
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public String getUser() { return user; }
+    public void setUser(String user) { this.user = user; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    public String getMail() { return mail; }
+    public void setMail(String mail) { this.mail = mail; }
+    public String getCellular() { return cellular; }
+    public void setCellular(String cellular) { this.cellular = cellular; }
+    public User getUserAudit() { return userAudit; }
+    public void setUserAudit(User userAudit) { this.userAudit = userAudit; }
+    public LocalDateTime getAuditDate() { return auditDate; }
+    public void setAuditDate(LocalDateTime auditDate) { this.auditDate = auditDate; }
+    public Attachment getAttachment() { return attachment; }
+    public void setAttachment(Attachment attachment) { this.attachment = attachment; }
+    public Set<UserRole> getRoles() { return roles; }
+    public void setRoles(Set<UserRole> roles) { this.roles = roles; }
 }
