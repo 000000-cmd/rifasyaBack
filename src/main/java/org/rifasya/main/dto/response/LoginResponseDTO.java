@@ -1,17 +1,19 @@
 package org.rifasya.main.dto.response;
-
 import java.util.List;
 import java.util.UUID;
 
 public class LoginResponseDTO {
 
+    private String accessToken; // <-- El token de corta duración
     private UUID id;
     private String username;
-    private String name; // Nombre completo del tercero
+    private String name;
     private String email;
     private List<String> roles;
 
     // Getters y Setters
+    public String getAccessToken() { return accessToken; }
+    public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
     public String getUsername() { return username; }
@@ -23,3 +25,4 @@ public class LoginResponseDTO {
     public List<String> getRoles() { return roles; }
     public void setRoles(List<String> roles) { this.roles = roles; }
 }
+

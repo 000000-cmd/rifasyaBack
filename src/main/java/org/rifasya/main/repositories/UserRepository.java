@@ -1,10 +1,13 @@
 package org.rifasya.main.repositories;
 
+import org.rifasya.main.dto.response.LoginResponseDTO;
+import org.rifasya.main.entities.ThirdParty;
 import org.rifasya.main.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
@@ -38,4 +41,28 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByUser(String username);
 
     Optional<User> findByMail(String mail);
+
+    default LoginResponseDTO toLoginResponseDTO(User user, ThirdParty thirdParty) {
+        if (user == null) return null;
+
+        LoginResponseDTO dto = new LoginResponseDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUser());
+        dto.setEmail(user.getMail());
+
+        if (thirdParty != null) {
+            dto.setName(thirdParty.getFirstName() + " " + thirdParty.getFirstLastName());
+        } else {
+            dto.setName(user.getUser());
+        }
+
+        if (user.getRoles() != null) {
+            dto.setRoles(user.getRoles().stream()
+                    .map(userRole -> userRole.getRole().getCode())
+                    .collect(Collectors.toList()));
+        }
+
+        return dto;
+    }
+
 }
