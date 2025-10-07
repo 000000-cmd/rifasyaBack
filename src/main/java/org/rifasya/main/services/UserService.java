@@ -7,11 +7,11 @@ import org.rifasya.main.dto.request.UserDTO.EmbeddedUserRequestDTO;
 import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
 import org.rifasya.main.entities.User;
 import org.rifasya.main.entities.UserRole;
-import org.rifasya.main.entities.listEntities.ListRoleType;
+import org.rifasya.main.entities.listEntities.ListRole;
 import org.rifasya.main.mappers.UserMapper;
 import org.rifasya.main.models.UserModel;
 import org.rifasya.main.repositories.UserRepository;
-import org.rifasya.main.repositories.listRepositories.ListRoleTypeRepository;
+import org.rifasya.main.repositories.listRepositories.ListRoleRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +26,9 @@ public class UserService {
     private final UserRepository userRepo;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final UserMapper userMapper;
-    private final ListRoleTypeRepository roleTypeRepo;
+    private final ListRoleRepository roleTypeRepo;
 
-    public UserService(UserRepository userRepo, UserMapper userMapper, ListRoleTypeRepository roleTypeRepo) {
+    public UserService(UserRepository userRepo, UserMapper userMapper, ListRoleRepository roleTypeRepo) {
         this.userRepo = userRepo;
         this.userMapper = userMapper;
         this.roleTypeRepo = roleTypeRepo;
@@ -45,7 +45,7 @@ public class UserService {
         if (userRequestDTO.getRoleCodes() != null && !userRequestDTO.getRoleCodes().isEmpty()) {
             Set<UserRole> roles = new HashSet<>();
             for (String roleCode : userRequestDTO.getRoleCodes()) {
-                ListRoleType roleType = roleTypeRepo.findByCode(roleCode)
+                ListRole roleType = roleTypeRepo.findByCode(roleCode)
                         .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + roleCode));
                 roles.add(new UserRole(userEntity, roleType));
             }

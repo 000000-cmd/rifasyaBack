@@ -14,7 +14,7 @@ import org.rifasya.main.models.ThirdPartyModel;
 import org.rifasya.main.repositories.listRepositories.ListDocumentTypeRepository;
 import org.rifasya.main.repositories.listRepositories.ListGenderTypeRepository;
 
-@Mapper(componentModel = "spring", uses = {UserMapper.class, ListTypeMapper.class})
+@Mapper(componentModel = "spring", uses = {UserMapper.class, ListMapper.class})
 public interface ThirdPartyMapper {
 
     // DTO -> Model
@@ -29,18 +29,19 @@ public interface ThirdPartyMapper {
     // Model -> Entity
     @Mapping(source = "model.user", target = "user")
     @Mapping(source = "model.id", target = "id")
-    @Mapping(target = "documentType", expression = "java(listTypeMapper.toDocumentType(model.getDocumentCode(), docRepo))")
-    @Mapping(target = "genderType", expression = "java(listTypeMapper.toGenderType(model.getGenderCode(), genderRepo))")
+    @Mapping(target = "documentType", expression = "java(listMapper.toDocumentType(model.getDocumentCode(), docRepo))")
+    @Mapping(target = "genderType", expression = "java(listMapper.toGenderType(model.getGenderCode(), genderRepo))")
     ThirdParty modelToEntity(
             ThirdPartyModel model,
             @Context ListDocumentTypeRepository docRepo,
             @Context ListGenderTypeRepository genderRepo,
+            @Context ListMapper listMapper,
             User userEntity
     );
 
     // Entity -> Model
-    @Mapping(source = "documentType", target = "documentCode", qualifiedByName = "toCode")
-    @Mapping(source = "genderType", target = "genderCode", qualifiedByName = "toCode")
+    @Mapping(source = "documentType", target = "documentCode", qualifiedByName = "documentTypeToCode")
+    @Mapping(source = "genderType", target = "genderCode", qualifiedByName = "genderTypeToCode")
     @Mapping(source = "user", target = "user")
     ThirdPartyModel entityToModel(ThirdParty entity);
 
@@ -54,13 +55,24 @@ public interface ThirdPartyMapper {
             @Context ListGenderTypeRepository genderRepo
     );
 
-    // Métodos auxiliares con @Named
+    // --- Métodos para convertir entidad a código ---
+    @Named("documentTypeToCode")
+    default String documentTypeToCode(ListDocumentType docType) {
+        return (docType != null) ? docType.getCode() : null;
+    }
+
+    @Named("genderTypeToCode")
+    default String genderTypeToCode(ListGenderType genderType) {
+        return (genderType != null) ? genderType.getCode() : null;
+    }
+
+    // --- Métodos para validar y resolver códigos desde el DTO ---
     @Named("resolveGenderCode")
     default String resolveGenderCode(String code, @Context ListGenderTypeRepository repo) {
         if (code == null) return null;
         return repo.findByCode(code)
                 .map(ListGenderType::getCode)
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("El código de género '" + code + "' no es válido."));
     }
 
     @Named("resolveDocumentCode")
@@ -68,9 +80,10 @@ public interface ThirdPartyMapper {
         if (code == null) return null;
         return repo.findByCode(code)
                 .map(ListDocumentType::getCode)
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("El código de documento '" + code + "' no es válido."));
     }
 
+    // --- Métodos para resolver nombres para el DTO de respuesta ---
     @Named("resolveGenderName")
     default String resolveGenderName(String code, @Context ListGenderTypeRepository repo) {
         if (code == null) return null;

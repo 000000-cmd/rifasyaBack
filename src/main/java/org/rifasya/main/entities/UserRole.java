@@ -2,7 +2,7 @@ package org.rifasya.main.entities;
 
 import jakarta.persistence.*;
 import java.util.UUID;
-import org.rifasya.main.entities.listEntities.ListRoleType;
+import org.rifasya.main.entities.listEntities.ListRole;
 
 @Entity
 @Table(name = "userroles")
@@ -19,12 +19,12 @@ public class UserRole {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdList", referencedColumnName = "IdList") // Corregido para apuntar a IdList
-    private ListRoleType role;
+    private ListRole role;
 
     // Constructores, Getters y Setters (sin cambios)
     public UserRole() {}
 
-    public UserRole(User user, ListRoleType role) {
+    public UserRole(User user, ListRole role) {
         this.user = user;
         this.role = role;
     }
@@ -33,6 +33,6 @@ public class UserRole {
     public void setId(UUID id) { this.id = id; }
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
-    public ListRoleType getRole() { return role; }
-    public void setRole(ListRoleType role) { this.role = role; }
+    public ListRole getRole() { return role; }
+    public void setRole(ListRole role) { this.role = role; }
 }

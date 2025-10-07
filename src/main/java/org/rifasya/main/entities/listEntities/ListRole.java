@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "listroletypes")
-public class ListRoleType {
+public class ListRole {
 
     @Id
     @Column(name = "IdList")
