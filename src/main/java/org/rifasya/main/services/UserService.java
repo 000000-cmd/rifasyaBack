@@ -8,9 +8,12 @@ import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
 import org.rifasya.main.entities.User;
 import org.rifasya.main.entities.UserRole;
 import org.rifasya.main.entities.listEntities.ListRole;
+import org.rifasya.main.exceptions.DuplicateResourceException;
+import org.rifasya.main.exceptions.ResourceNotFoundException;
 import org.rifasya.main.mappers.UserMapper;
 import org.rifasya.main.models.UserModel;
 import org.rifasya.main.repositories.UserRepository;
+import org.rifasya.main.repositories.listRepositories.ListRoleRepository;
 import org.rifasya.main.repositories.listRepositories.ListRoleRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,49 +29,43 @@ public class UserService {
     private final UserRepository userRepo;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final UserMapper userMapper;
-    private final ListRoleRepository roleTypeRepo;
+    private final ListRoleRepository roleRepo;
 
-    public UserService(UserRepository userRepo, UserMapper userMapper, ListRoleRepository roleTypeRepo) {
+    public UserService(UserRepository userRepo, UserMapper userMapper, ListRoleRepository roleRepo) {
         this.userRepo = userRepo;
         this.userMapper = userMapper;
-        this.roleTypeRepo = roleTypeRepo;
+        this.roleRepo = roleRepo;
     }
 
     @Transactional
     public UserResponseDTO createUser(EmbeddedUserRequestDTO userRequestDTO) {
-        // ... Pasos 1 y 2 (DTO -> Model -> Entity)
+        // Validar duplicados
+        if (userRepo.existsByUser(userRequestDTO.getUser())) {
+            throw new DuplicateResourceException("El nombre de usuario '" + userRequestDTO.getUser() + "' ya está en uso.");
+        }
+        if (userRepo.existsByMail(userRequestDTO.getMail())) {
+            throw new DuplicateResourceException("El correo electrónico '" + userRequestDTO.getMail() + "' ya está registrado.");
+        }
+
         UserModel userModel = userMapper.requestToModel(userRequestDTO);
         userModel.setId(UUID.randomUUID());
         User userEntity = userMapper.modelToEntity(userModel);
 
-        // Asignar roles
         if (userRequestDTO.getRoleCodes() != null && !userRequestDTO.getRoleCodes().isEmpty()) {
             Set<UserRole> roles = new HashSet<>();
             for (String roleCode : userRequestDTO.getRoleCodes()) {
-                ListRole roleType = roleTypeRepo.findByCode(roleCode)
-                        .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + roleCode));
+                ListRole roleType = roleRepo.findByCode(roleCode)
+                        .orElseThrow(() -> new ResourceNotFoundException("El rol con código '" + roleCode + "' no existe."));
                 roles.add(new UserRole(userEntity, roleType));
             }
             userEntity.setRoles(roles);
         }
 
-        // ... Pasos 3, 4 y 5 (Password, Auditor, Guardar)
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        // ... (Tu lógica de auditoría existente)
         userEntity.setUserAudit(userEntity);
         userEntity = userRepo.save(userEntity);
 
-        // ... Paso 6 (Retornar DTO)
         userModel = userMapper.entityToModel(userEntity);
         return userMapper.modelToResponseDTO(userModel);
-    }
-
-    // Método auxiliar para persistir UserModel directamente
-    @Transactional
-    public User saveUser(UserModel userModel) {
-        User userEntity = userMapper.modelToEntity(userModel);
-        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        userEntity = userRepo.save(userEntity);
-        return userEntity;
     }
 }

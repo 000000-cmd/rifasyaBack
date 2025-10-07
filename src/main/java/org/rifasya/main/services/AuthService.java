@@ -1,6 +1,7 @@
 package org.rifasya.main.services;
 
 import org.rifasya.main.entities.User;
+import org.rifasya.main.exceptions.InvalidCredentialsException;
 import org.rifasya.main.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,10 @@ public class AuthService {
     public User login(String usernameOrEmail, String password) {
         User user = userRepository.findByUser(usernameOrEmail)
                 .or(() -> userRepository.findByMail(usernameOrEmail))
-                .orElseThrow(() -> new RuntimeException("Usuario o contraseña incorrectos"));
+                .orElseThrow(() -> new InvalidCredentialsException("Usuario o contraseña incorrectos."));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Usuario o contraseña incorrectos");
+            throw new InvalidCredentialsException("Usuario o contraseña incorrectos.");
         }
 
         return user;

@@ -7,6 +7,7 @@ import org.rifasya.main.dto.response.ThirdPartyResponseDTO;
 import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
 import org.rifasya.main.entities.ThirdParty;
 import org.rifasya.main.entities.User;
+import org.rifasya.main.exceptions.BadRequestException;
 import org.rifasya.main.mappers.ListMapper;
 import org.rifasya.main.mappers.ThirdPartyMapper;
 import org.rifasya.main.mappers.UserMapper;
@@ -52,7 +53,7 @@ public class ThirdPartyService {
         // 1. Preparar y crear el usuario
         EmbeddedUserRequestDTO userDto = dto.getUser();
         if (userDto == null) {
-            throw new IllegalArgumentException("La información del usuario es obligatoria para crear un tercero.");
+            throw new BadRequestException("La información del usuario es obligatoria para crear un tercero.");
         }
         userDto.setRoleCodes(Collections.singletonList("TERUSU")); // Asignar rol de tercero por defecto
 

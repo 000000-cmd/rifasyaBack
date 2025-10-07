@@ -2,6 +2,8 @@ package org.rifasya.main.services;
 
 import org.rifasya.main.entities.RefreshToken;
 import org.rifasya.main.entities.User;
+import org.rifasya.main.exceptions.ResourceNotFoundException;
+import org.rifasya.main.exceptions.TokenRefreshException;
 import org.rifasya.main.repositories.RefreshTokenRepository;
 import org.rifasya.main.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,15 +35,11 @@ public class RefreshTokenService {
     @Transactional
     public RefreshToken createRefreshToken(UUID userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + userId));
 
-        // 1. Invalida cualquier token existente para este usuario
         refreshTokenRepository.deleteByUser(user);
-
-        // Forzamos a que la operación de borrado se ejecute en la base de datos AHORA MISMO.
         refreshTokenRepository.flush();
 
-        // 3. Ahora creamos el nuevo token de forma segura
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
@@ -53,7 +51,7 @@ public class RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
-            throw new RuntimeException("El token de refresco ha expirado. Por favor, inicie sesión de nuevo.");
+            throw new TokenRefreshException(token.getToken(), "El token de refresco ha expirado. Por favor, inicie sesión de nuevo.");
         }
         return token;
     }

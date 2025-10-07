@@ -42,6 +42,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByMail(String mail);
 
+    boolean existsByUser(String user);
+
+    boolean existsByMail(String mail);
+
     default LoginResponseDTO toLoginResponseDTO(User user, ThirdParty thirdParty) {
         if (user == null) return null;
 
