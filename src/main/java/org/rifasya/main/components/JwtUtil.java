@@ -20,7 +20,6 @@ public class JwtUtil {
     private final Key key;
     private final long expirationMillis;
 
-    // --- CAMBIO PRINCIPAL ---
     // 1. Inyectamos el valor de 'jwt.expirationMs' desde application.properties.
     //    Esto nos permite configurar la duración del AccessToken (ej. 15 minutos).
     public JwtUtil(@Value("${jwt.secret}") String secret,
@@ -29,11 +28,8 @@ public class JwtUtil {
             throw new IllegalArgumentException("La clave JWT debe tener mínimo 32 caracteres");
         }
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.expirationMillis = expirationMillis; // 2. Asignamos el valor inyectado.
+        this.expirationMillis = expirationMillis;
     }
-
-    // El resto del archivo es funcionalmente idéntico, solo se han eliminado
-    // métodos redundantes o no necesarios para la nueva lógica.
 
     /**
      * Genera un nuevo AccessToken para el usuario especificado.
@@ -43,8 +39,8 @@ public class JwtUtil {
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMillis)) // Usa la duración configurable
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -55,9 +51,13 @@ public class JwtUtil {
      * @return El nombre de usuario.
      */
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
-
     /**
      * Valida si un token es correcto (firma, no expirado).
      * @param token El token JWT.
@@ -68,7 +68,6 @@ public class JwtUtil {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            // Aquí podrías añadir un log para registrar intentos de tokens inválidos.
             return false;
         }
     }

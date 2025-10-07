@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -33,49 +35,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
-        // --- CAMBIO PRINCIPAL: Ahora buscamos el token en el HEADER, no en las cookies ---
-        // El AccessToken, por ser de corta duración, viaja en el header 'Authorization'.
+        // --- PASO 1: EXTRAER EL TOKEN DEL HEADER ---
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String username;
 
-        // Si no hay header o no empieza con "Bearer ", continuamos la cadena de filtros.
+        // Si no hay header o no empieza con "Bearer ", no hacemos nada y continuamos.
         if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Extraemos el token (quitando el prefijo "Bearer ").
-        jwt = authHeader.substring(7);
+        // Extraemos el token JWT (quitando el prefijo "Bearer ").
+        final String jwt = authHeader.substring(7);
 
+        // --- PASO 2: VALIDAR EL TOKEN Y ESTABLECER LA AUTENTICACIÓN ---
         try {
-            username = jwtUtil.extractUsername(jwt);
-        } catch (Exception e) {
-            // Si el token está malformado o expirado, no se puede extraer el username.
-            // Simplemente continuamos para que Spring Security lo marque como no autenticado.
-            filterChain.doFilter(request, response);
-            return;
-        }
+            final String username = jwtUtil.extractUsername(jwt);
 
-        // Si tenemos un username y el usuario aún no está autenticado en el contexto de seguridad.
-        if (StringUtils.hasText(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            // Si tenemos un username y el usuario aún no está autenticado en esta petición.
+            if (StringUtils.hasText(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            // Validamos el token (firma y expiración).
-            if (jwtUtil.validateToken(jwt)) {
-                // Creamos el token de autenticación para Spring Security.
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                // Establecemos la autenticación en el contexto.
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                // Si el token es válido (firma y no expirado)
+                if (jwtUtil.validateToken(jwt)) {
+                    // Creamos el objeto de autenticación para Spring Security.
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null, // Las credenciales son nulas porque ya validamos el token
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (Exception e) {
+            logger.error("No se pudo establecer la autenticación del usuario: {}", new Throwable(e.getMessage()));
         }
-
-        // Continuamos con el siguiente filtro en la cadena.
         filterChain.doFilter(request, response);
     }
 }

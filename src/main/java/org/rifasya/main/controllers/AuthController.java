@@ -19,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -45,20 +46,28 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        // 1. Validar credenciales y obtener el usuario
         User user = authService.login(loginRequest.getUsernameOrEmail(), loginRequest.getPassword());
+
+        // 2. Generar el AccessToken de corta duración
         String accessToken = jwtUtil.generateToken(user.getUser());
+
+        // 3. Crear (o recrear) el RefreshToken de larga duración en la BD
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
+        // 4. Crear la cookie HttpOnly EXCLUSIVAMENTE para el RefreshToken
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken.getToken());
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(false); // true en producción
+        refreshTokenCookie.setSecure(false); // Cambiar a true en producción (HTTPS)
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge((int) (refreshToken.getExpiryDate().getEpochSecond() - (System.currentTimeMillis() / 1000)));
+        long duration = refreshToken.getExpiryDate().getEpochSecond() - Instant.now().getEpochSecond();
+        refreshTokenCookie.setMaxAge((int) duration);
         response.addCookie(refreshTokenCookie);
 
+        // 5. Preparar el DTO de respuesta con los datos del usuario y el AccessToken
         Optional<ThirdParty> thirdPartyOpt = thirdPartyRepository.findByUser(user);
         LoginResponseDTO responseDTO = userMapper.toLoginResponseDTO(user, thirdPartyOpt.orElse(null));
-        responseDTO.setAccessToken(accessToken);
+        responseDTO.setAccessToken(accessToken); // Se añade el AccessToken al cuerpo del JSON
 
         return ResponseEntity.ok(responseDTO);
     }
