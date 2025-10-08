@@ -29,7 +29,7 @@ public class ThirdPartyService {
     private final ThirdPartyRepository thirdPartyRepository;
     private final ListDocumentTypeRepository docTypeRepo;
     private final ListGenderTypeRepository genderTypeRepo;
-    private final ListMapper listMapper; // Asegúrate de que este mapper esté inyectado
+    private final ListMapper listMapper;
 
     public ThirdPartyService(UserService userService,
                              UserMapper userMapper,
@@ -37,14 +37,14 @@ public class ThirdPartyService {
                              ThirdPartyRepository thirdPartyRepository,
                              ListDocumentTypeRepository docTypeRepo,
                              ListGenderTypeRepository genderTypeRepo,
-                             ListMapper listMapper) { // Añadido al constructor
+                             ListMapper listMapper) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.thirdPartyMapper = thirdPartyMapper;
         this.thirdPartyRepository = thirdPartyRepository;
         this.docTypeRepo = docTypeRepo;
         this.genderTypeRepo = genderTypeRepo;
-        this.listMapper = listMapper; // Inyectado
+        this.listMapper = listMapper;
     }
 
     @Transactional
@@ -72,7 +72,7 @@ public class ThirdPartyService {
                 thirdPartyModel,
                 docTypeRepo,
                 genderTypeRepo,
-                listMapper, // Se pasa el listMapper para que esté disponible en el contexto
+                listMapper,
                 userEntity
         );
         thirdPartyEntity.setUserAudit(userEntity); // Asignar usuario de auditoría
