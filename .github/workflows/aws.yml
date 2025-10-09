@@ -52,4 +52,4 @@ jobs:
             kill -9 $PID
           fi
           # Inicia la nueva versión del .jar en segundo plano con la memoria asignada
-          nohup java -Xmx1g -jar *.jar > app.log 2>&1 &
+          echo "nohup java -Xmx1g -jar *.jar > /home/ec2-user/app.log 2>&1" | at now
