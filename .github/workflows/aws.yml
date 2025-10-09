@@ -52,5 +52,5 @@ jobs:
           if [ -n "$PID" ]; then
             kill -9 $PID
           fi
-          # Inicia la nueva versión del .jar en segundo plano
+          # Inicia la nueva versión del .jar en segundo plano y la memoria asignada
           nohup java -Xmx512m -jar *.jar &
