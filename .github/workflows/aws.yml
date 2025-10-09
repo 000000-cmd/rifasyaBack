@@ -45,11 +45,6 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          # Encuentra el ID del proceso Java que ya está corriendo
-          PID=$(pgrep -f .jar)
-          # Si el proceso existe, lo mata para detener la versión anterior
-          if [ -n "$PID" ]; then
-            kill -9 $PID
-          fi
-          # Inicia la nueva versión del .jar en segundo plano con la memoria asignada
-          echo "nohup java -Xmx1g -jar *.jar > /home/ec2-user/app.log 2>&1" | at now
+          echo "--- Ejecutando una prueba simple en segundo plano ---"
+          # Programamos un comando simple: esperar 5 segundos y crear un archivo.
+          echo "sleep 5 && echo 'Hola desde GitHub Actions' > /home/ec2-user/test.txt" | at now
