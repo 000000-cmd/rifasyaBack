@@ -14,6 +14,7 @@ import org.rifasya.main.repositories.ThirdPartyRepository;
 import org.rifasya.main.repositories.UserRepository;
 import org.rifasya.main.services.AuthService;
 import org.rifasya.main.services.RefreshTokenService;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,14 +36,17 @@ public class AuthController {
     private final UserMapper userMapper;
     private final ThirdPartyRepository thirdPartyRepository;
     private final UserRepository userRepository;
+    private final BuildProperties buildProperties;
 
-    public AuthController(AuthService authService, RefreshTokenService refreshTokenService, JwtUtil jwtUtil, UserMapper userMapper, ThirdPartyRepository thirdPartyRepository, UserRepository userRepository) {
+
+    public AuthController(AuthService authService, RefreshTokenService refreshTokenService, JwtUtil jwtUtil, UserMapper userMapper, ThirdPartyRepository thirdPartyRepository, UserRepository userRepository, BuildProperties buildProperties) {
         this.authService = authService;
         this.refreshTokenService = refreshTokenService;
         this.jwtUtil = jwtUtil;
         this.userMapper = userMapper;
         this.thirdPartyRepository = thirdPartyRepository;
         this.userRepository = userRepository;
+        this.buildProperties = buildProperties;
     }
 
     @PostMapping("/login")
@@ -123,6 +128,22 @@ public class AuthController {
         response.addCookie(cookie);
 
         return ResponseEntity.ok(Map.of("message", "Logout exitoso"));
+    }
+
+    /**
+     * Endpoint que devuelve la versión actual de la aplicación.
+     * Responde a GET /auth/apiV
+     * @return Un objeto JSON con la versión, ej: {"version": "0.0.1-SNAPSHOT"}
+     */
+    @GetMapping("/apiV")
+    public Map<String, String> getApiVersion() {
+        // Creamos un mapa para devolver una respuesta JSON estructurada
+        Map<String, String> response = new HashMap<>();
+
+        // Obtenemos la versión desde el objeto BuildProperties
+        response.put("version", buildProperties.getVersion());
+
+        return response;
     }
 }
 
