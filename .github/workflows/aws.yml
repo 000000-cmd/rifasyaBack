@@ -52,4 +52,4 @@ jobs:
             kill -9 $PID
           fi
           # Inicia la nueva versión del .jar en segundo plano con la memoria asignada
-          nohup java -Xmx400m -jar *.jar &
+          nohup java -Xmx1g -jar *.jar &
