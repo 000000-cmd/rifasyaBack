@@ -45,4 +45,4 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          echo "cd /home/ec2-user && PID=\$(pgrep -f .jar) && if [ -n \"\$PID\" ]; then kill -9 \"\$PID\"; fi && nohup java -Xmx1g -jar *.jar > app.log 2>&1" | at now
+          echo "cd /home/ec2-user && PID=\$(pgrep -f .jar) && if [ -n \"\$PID\" ]; then kill -9 \"\$PID\"; fi && nohup /usr/bin/java -Xmx1g -jar *.jar > app.log 2>&1" | at now
