@@ -11,7 +11,6 @@ jobs:
   deploy:
     # La máquina virtual temporal donde se ejecutará el workflow
     runs-on: ubuntu-latest
-
     steps:
     # 1. Clona tu repositorio en la máquina virtual
     - name: Checkout code
@@ -52,5 +51,5 @@ jobs:
           if [ -n "$PID" ]; then
             kill -9 $PID
           fi
-          # Inicia la nueva versión del .jar en segundo plano y la memoria asignada
+          # Inicia la nueva versión del .jar en segundo plano con la memoria asignada
           nohup java -Xmx512m -jar *.jar &
