@@ -45,6 +45,4 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          echo "--- Ejecutando una prueba simple en segundo plano ---"
-          # Programamos un comando simple: esperar 5 segundos y crear un archivo.
-          echo "sleep 5 && echo 'Hola desde GitHub Actions' > /home/ec2-user/test.txt" | at now
+          echo "cd /home/ec2-user && PID=\$(pgrep -f .jar) && if [ -n \"\$PID\" ]; then kill -9 \"\$PID\"; fi && nohup java -Xmx1g -jar *.jar > app.log 2>&1" | at now
