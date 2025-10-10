@@ -28,8 +28,8 @@ public interface UserMapper {
         if (dto == null) return null;
         User user = new User();
         user.setId(dto.getId());
-        user.setUser(dto.getUser());
-        user.setMail(dto.getMail());
+        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
         user.setCellular(dto.getCellular());
         // password no viene en el response, se debe asignar aparte si necesario
         return user;
@@ -40,13 +40,13 @@ public interface UserMapper {
 
         LoginResponseDTO dto = new LoginResponseDTO();
         dto.setId(user.getId());
-        dto.setUsername(user.getUser());
-        dto.setEmail(user.getMail());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
 
         if (thirdParty != null) {
             dto.setName(thirdParty.getFirstName() + " " + thirdParty.getFirstLastName());
         } else {
-            dto.setName(user.getUser()); // Si no hay tercero, el nombre es el username
+            dto.setName(user.getUsername()); // Si no hay tercero, el nombre es el username
         }
 
         if (user.getRoles() != null) {

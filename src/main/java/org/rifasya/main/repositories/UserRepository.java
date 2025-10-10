@@ -38,26 +38,26 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Override
     void deleteAll();
 
-    Optional<User> findByUser(String username);
+    Optional<User> findByUsername(String username);
 
-    Optional<User> findByMail(String mail);
+    Optional<User> findByEmail(String email);
 
-    boolean existsByUser(String user);
+    boolean existsByUsername(String username);
 
-    boolean existsByMail(String mail);
+    boolean existsByEmail(String mail);
 
     default LoginResponseDTO toLoginResponseDTO(User user, ThirdParty thirdParty) {
         if (user == null) return null;
 
         LoginResponseDTO dto = new LoginResponseDTO();
         dto.setId(user.getId());
-        dto.setUsername(user.getUser());
-        dto.setEmail(user.getMail());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
 
         if (thirdParty != null) {
             dto.setName(thirdParty.getFirstName() + " " + thirdParty.getFirstLastName());
         } else {
-            dto.setName(user.getUser());
+            dto.setName(user.getUsername());
         }
 
         if (user.getRoles() != null) {

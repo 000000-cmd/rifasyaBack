@@ -11,24 +11,24 @@ import java.util.List;
 @AllArgsConstructor
 public class EmbeddedUserRequestDTO {
     @NotBlank
-    private String user;
+    private String username;
 
     @NotBlank
     private String password;
 
     @NotBlank
-    private String mail;
+    private String email;
 
     private String cellular;
 
     private List<String> roleCodes;
 
-    public @NotBlank String getUser() {
-        return user;
+    public @NotBlank String getUsername() {
+        return username;
     }
 
-    public void setUser(@NotBlank String user) {
-        this.user = user;
+    public void setUsername(@NotBlank String username) {
+        this.username = username;
     }
 
     public @NotBlank String getPassword() {
@@ -39,12 +39,12 @@ public class EmbeddedUserRequestDTO {
         this.password = password;
     }
 
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getCellular() {

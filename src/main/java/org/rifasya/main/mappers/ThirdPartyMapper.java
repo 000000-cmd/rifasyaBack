@@ -20,6 +20,7 @@ public interface ThirdPartyMapper {
     // DTO -> Model
     @Mapping(target = "genderCode", source = "genderCode", qualifiedByName = "resolveGenderCode")
     @Mapping(target = "documentCode", source = "documentCode", qualifiedByName = "resolveDocumentCode")
+    @Mapping(target = "birthDate", source = "birthDate")
     ThirdPartyModel requestToModel(
             ThirdPartyRequestDTO dto,
             @Context ListDocumentTypeRepository docTypeRepo,
@@ -29,6 +30,7 @@ public interface ThirdPartyMapper {
     // Model -> Entity
     @Mapping(source = "model.user", target = "user")
     @Mapping(source = "model.id", target = "id")
+    @Mapping(source = "model.birthDate", target = "birthDate")
     @Mapping(target = "documentType", expression = "java(listMapper.toDocumentType(model.getDocumentCode(), docRepo))")
     @Mapping(target = "genderType", expression = "java(listMapper.toGenderType(model.getGenderCode(), genderRepo))")
     ThirdParty modelToEntity(
@@ -43,12 +45,15 @@ public interface ThirdPartyMapper {
     @Mapping(source = "documentType", target = "documentCode", qualifiedByName = "documentTypeToCode")
     @Mapping(source = "genderType", target = "genderCode", qualifiedByName = "genderTypeToCode")
     @Mapping(source = "user", target = "user")
+    @Mapping(source = "birthDate", target = "birthDate")
     ThirdPartyModel entityToModel(ThirdParty entity);
 
     // Model -> ResponseDTO
     @Mapping(source = "user", target = "user")
     @Mapping(target = "documentType", source = "documentCode", qualifiedByName = "resolveDocumentName")
     @Mapping(target = "genderType", source = "genderCode", qualifiedByName = "resolveGenderName")
+    @Mapping(target = "birthDate", source = "birthDate")
+    @Mapping(target = "location", ignore = true)
     ThirdPartyResponseDTO modelToResponseDTO(
             ThirdPartyModel model,
             @Context ListDocumentTypeRepository docRepo,

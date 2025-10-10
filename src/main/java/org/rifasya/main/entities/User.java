@@ -14,13 +14,13 @@ public class User {
     private UUID id;
 
     @Column(name = "Username", nullable = false, unique = true)
-    private String user;
+    private String username;
 
     @Column(name = "Password", nullable = false)
     private String password;
 
-    @Column(name = "Mail", nullable = false, unique = true)
-    private String mail;
+    @Column(name = "Email", nullable = false, unique = true)
+    private String email;
 
     @Column(name = "Cellular")
     private String cellular;
@@ -41,12 +41,12 @@ public class User {
     // Getters y Setters
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
-    public String getUser() { return user; }
-    public void setUser(String user) { this.user = user; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
-    public String getMail() { return mail; }
-    public void setMail(String mail) { this.mail = mail; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
     public String getCellular() { return cellular; }
     public void setCellular(String cellular) { this.cellular = cellular; }
     public User getUserAudit() { return userAudit; }

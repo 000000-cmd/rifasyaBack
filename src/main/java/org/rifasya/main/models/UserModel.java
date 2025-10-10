@@ -3,9 +3,7 @@ package org.rifasya.main.models;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.UUID;
 
@@ -16,13 +14,13 @@ public class UserModel {
     private UUID id;
 
     @NotBlank
-    private String user;
+    private String username;
 
     @NotBlank
     private String password;
 
     @NotBlank
-    private String mail;
+    private String email;
 
     private String cellular;
     private byte[] attachment;
@@ -35,12 +33,12 @@ public class UserModel {
         this.id = id;
     }
 
-    public @NotBlank String getUser() {
-        return user;
+    public @NotBlank String getUsername() {
+        return username;
     }
 
-    public void setUser(@NotBlank String user) {
-        this.user = user;
+    public void setUsername(@NotBlank String username) {
+        this.username = username;
     }
 
     public @NotBlank String getPassword() {
@@ -51,12 +49,12 @@ public class UserModel {
         this.password = password;
     }
 
-    public @NotBlank String getMail() {
-        return mail;
+    public @NotBlank String getEmail() {
+        return email;
     }
 
-    public void setMail(@NotBlank String mail) {
-        this.mail = mail;
+    public void setEmail(@NotBlank String email) {
+        this.email = email;
     }
 
     public String getCellular() {

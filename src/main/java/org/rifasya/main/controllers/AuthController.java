@@ -55,7 +55,7 @@ public class AuthController {
         User user = authService.login(loginRequest.getUsernameOrEmail(), loginRequest.getPassword());
 
         // 2. Generar el AccessToken de corta duración
-        String accessToken = jwtUtil.generateToken(user.getUser());
+        String accessToken = jwtUtil.generateToken(user.getUsername());
 
         // 3. Crear (o recrear) el RefreshToken de larga duración en la BD
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
@@ -91,7 +91,7 @@ public class AuthController {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    String newAccessToken = jwtUtil.generateToken(user.getUser());
+                    String newAccessToken = jwtUtil.generateToken(user.getUsername());
                     return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
                 })
                 .orElse(ResponseEntity.status(401).body(Map.of("message", "Invalid refresh token")));
@@ -103,7 +103,7 @@ public class AuthController {
             return ResponseEntity.status(401).build();
         }
 
-        User user = userRepository.findByUser(userDetails.getUsername())
+        User user = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado en el token"));
 
         Optional<ThirdParty> thirdPartyOpt = thirdPartyRepository.findByUser(user);

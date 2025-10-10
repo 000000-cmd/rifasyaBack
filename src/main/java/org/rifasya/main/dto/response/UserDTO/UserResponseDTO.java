@@ -1,8 +1,5 @@
 package org.rifasya.main.dto.response.UserDTO;
 
-import org.rifasya.main.entities.Attachment;
-
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -10,18 +7,18 @@ import java.util.UUID;
 public class UserResponseDTO {
 
     private UUID id;
-    private String user;
+    private String username;
     private String cellular;
-    private String mail;
+    private String email;
 
     public UserResponseDTO(UUID id,
-                           String user,
+                           String username,
                            String cellular,
-                           String mail) {
+                           String email) {
         this.id = id;
-        this.user = user;
+        this.username = username;
         this.cellular = cellular;
-        this.mail = mail;
+        this.email = email;
     }
 
     public UUID getId() {
@@ -32,12 +29,12 @@ public class UserResponseDTO {
         this.id = id;
     }
 
-    public String getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getCellular() {
@@ -48,11 +45,11 @@ public class UserResponseDTO {
         this.cellular = cellular;
     }
 
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

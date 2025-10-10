@@ -14,7 +14,6 @@ import org.rifasya.main.mappers.UserMapper;
 import org.rifasya.main.models.UserModel;
 import org.rifasya.main.repositories.UserRepository;
 import org.rifasya.main.repositories.listRepositories.ListRoleRepository;
-import org.rifasya.main.repositories.listRepositories.ListRoleRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,11 +39,11 @@ public class UserService {
     @Transactional
     public UserResponseDTO createUser(EmbeddedUserRequestDTO userRequestDTO) {
         // Validar duplicados
-        if (userRepo.existsByUser(userRequestDTO.getUser())) {
-            throw new DuplicateResourceException("El nombre de usuario '" + userRequestDTO.getUser() + "' ya está en uso.");
+        if (userRepo.existsByUsername(userRequestDTO.getUsername())) {
+            throw new DuplicateResourceException("El nombre de usuario '" + userRequestDTO.getUsername() + "' ya está en uso.");
         }
-        if (userRepo.existsByMail(userRequestDTO.getMail())) {
-            throw new DuplicateResourceException("El correo electrónico '" + userRequestDTO.getMail() + "' ya está registrado.");
+        if (userRepo.existsByEmail(userRequestDTO.getEmail())) {
+            throw new DuplicateResourceException("El correo electrónico '" + userRequestDTO.getEmail() + "' ya está registrado.");
         }
 
         UserModel userModel = userMapper.requestToModel(userRequestDTO);

@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -25,6 +27,8 @@ public class ThirdPartyModel {
     @NotBlank
     private String documentNumber;
 
+    private LocalDate birthDate;
+
     @NotBlank
     private String documentCode;
     private String genderCode;
@@ -39,11 +43,11 @@ public class ThirdPartyModel {
         this.id = id;
     }
 
-    public @NotBlank String getFirstName() {
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(@NotBlank String firstName) {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
@@ -55,11 +59,11 @@ public class ThirdPartyModel {
         this.secondName = secondName;
     }
 
-    public @NotBlank String getFirstLastName() {
+    public String getFirstLastName() {
         return firstLastName;
     }
 
-    public void setFirstLastName(@NotBlank String firstLastName) {
+    public void setFirstLastName(String firstLastName) {
         this.firstLastName = firstLastName;
     }
 
@@ -71,19 +75,27 @@ public class ThirdPartyModel {
         this.secondLastName = secondLastName;
     }
 
-    public @NotBlank String getDocumentNumber() {
+    public String getDocumentNumber() {
         return documentNumber;
     }
 
-    public void setDocumentNumber(@NotBlank String documentNumber) {
+    public void setDocumentNumber(String documentNumber) {
         this.documentNumber = documentNumber;
     }
 
-    public @NotBlank String getDocumentCode() {
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getDocumentCode() {
         return documentCode;
     }
 
-    public void setDocumentCode(@NotBlank String documentCode) {
+    public void setDocumentCode(String documentCode) {
         this.documentCode = documentCode;
     }
 

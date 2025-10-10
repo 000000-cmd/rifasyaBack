@@ -18,8 +18,8 @@ public class AuthService {
     }
 
     public User login(String usernameOrEmail, String password) {
-        User user = userRepository.findByUser(usernameOrEmail)
-                .or(() -> userRepository.findByMail(usernameOrEmail))
+        User user = userRepository.findByUsername(usernameOrEmail)
+                .or(() -> userRepository.findByEmail(usernameOrEmail))
                 .orElseThrow(() -> new InvalidCredentialsException("Usuario o contraseña incorrectos."));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {

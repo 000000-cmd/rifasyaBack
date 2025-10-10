@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
+import org.rifasya.main.dto.response.locationDTO.LocationResponseDTO;
 
+import java.time.LocalDate;
 import java.util.UUID;
-
-
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,6 +20,8 @@ public class ThirdPartyResponseDTO {
     private String SecondLastName;
     private String SecondName;
     private String DocumentType;
+    private LocalDate birthDate;
+    private LocationResponseDTO location;
     private String GenderType;
     private UserResponseDTO User;
 
@@ -77,6 +79,22 @@ public class ThirdPartyResponseDTO {
 
     public void setDocumentType(String documentType) {
         DocumentType = documentType;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public LocationResponseDTO getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationResponseDTO location) {
+        this.location = location;
     }
 
     public String getGenderType() {

@@ -7,24 +7,24 @@ import java.util.UUID;
 public class UserRequestDTO {
 
     @NotBlank
-    private String user;
+    private String username;
 
     @NotBlank
     private String password;
     private String cellular;
-    private String mail;
+    private String email;
     private UUID userAuditId;
     private byte[] attachment;
 
     // getters y setters manuales
-    public String getUser() { return user; }
-    public void setUser(String user) { this.user = user; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
     public String getCellular() { return cellular; }
     public void setCellular(String cellular) { this.cellular = cellular; }
-    public String getMail() { return mail; }
-    public void setMail(String mail) { this.mail = mail; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
     public UUID getUserAuditId() { return userAuditId; }
     public void setUserAuditId(UUID userAuditId) { this.userAuditId = userAuditId; }
     public byte[] getAttachment() {return attachment;}

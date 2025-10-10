@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import org.rifasya.main.entities.listEntities.ListDocumentType;
 import org.rifasya.main.entities.listEntities.ListGenderType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -40,6 +41,9 @@ public class ThirdParty {
     @JoinColumn(name = "IdDocumentType", nullable = false)
     private ListDocumentType documentType;
 
+    @Column(name = "BirthDate")
+    private LocalDate birthDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IdGenderType")
     private ListGenderType genderType;
@@ -60,8 +64,7 @@ public class ThirdParty {
     @Column(name = "AuditDate", nullable = false)
     private LocalDateTime auditDate;
 
-    public ThirdParty() {
-    }
+    public ThirdParty() {}
 
     public ThirdParty(UUID id, String firstName, String secondName, String firstLastName, String secondLastName,
                       String documentNumber, ListDocumentType documentType, ListGenderType genderType, User user,
@@ -107,6 +110,9 @@ public class ThirdParty {
 
     public ListDocumentType getDocumentType() { return documentType; }
     public void setDocumentType(ListDocumentType documentType) { this.documentType = documentType; }
+
+    public LocalDate getBirthDate() { return birthDate; }
+    public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
 
     public ListGenderType getGenderType() { return genderType; }
     public void setGenderType(ListGenderType genderType) { this.genderType = genderType; }

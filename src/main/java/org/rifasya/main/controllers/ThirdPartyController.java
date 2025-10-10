@@ -28,7 +28,6 @@ public class ThirdPartyController {
     @PostMapping("/create")
     @Transactional
     public ResponseEntity<ThirdPartyResponseDTO> create(@Valid @RequestBody ThirdPartyRequestDTO dto) {
-        // El servicio se encarga de crear primero el usuario y luego el tercero
         ThirdPartyResponseDTO responseDTO = thirdPartyService.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }

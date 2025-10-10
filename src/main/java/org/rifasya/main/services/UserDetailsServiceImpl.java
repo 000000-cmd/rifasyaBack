@@ -23,8 +23,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        User user = userRepository.findByUser(usernameOrEmail)
-                .or(() -> userRepository.findByMail(usernameOrEmail))
+        User user = userRepository.findByUsername(usernameOrEmail)
+                .or(() -> userRepository.findByEmail(usernameOrEmail))
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + usernameOrEmail));
 
         // Mapear roles a GrantedAuthority
@@ -33,7 +33,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .collect(Collectors.toSet());
 
         return new org.springframework.security.core.userdetails.User(
-                user.getUser(),
+                user.getUsername(),
                 user.getPassword(),
                 authorities
         );

@@ -36,4 +36,6 @@ public interface ThirdPartyRepository extends JpaRepository<ThirdParty, UUID> {
     void deleteAll();
 
     Optional<ThirdParty> findByUser(User user);
+
+    boolean existsByDocumentNumber(String documentNumber);
 }

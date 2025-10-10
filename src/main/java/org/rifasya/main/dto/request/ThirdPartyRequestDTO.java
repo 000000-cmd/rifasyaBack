@@ -2,9 +2,13 @@ package org.rifasya.main.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.rifasya.main.dto.request.UserDTO.EmbeddedUserRequestDTO;
+import org.rifasya.main.dto.request.locationDTO.LocationRequestDTO;
+
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,6 +27,12 @@ public class ThirdPartyRequestDTO {
     @NotBlank
     private String documentCode;
     private String genderCode;
+
+    private LocalDate birthDate;
+
+    @Valid
+    @NotNull
+    private LocationRequestDTO location;
 
     @Valid
     private EmbeddedUserRequestDTO user;
@@ -73,6 +83,22 @@ public class ThirdPartyRequestDTO {
 
     public void setDocumentCode(@NotBlank String documentCode) {
         this.documentCode = documentCode;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public LocationRequestDTO getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationRequestDTO location) {
+        this.location = location;
     }
 
     public String getGenderCode() {
