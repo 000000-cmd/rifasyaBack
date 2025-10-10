@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.rifasya</groupId>
     <artifactId>main</artifactId>
-    <version>0.1.1RC3</version>
+    <version>0.1.1RC4</version>
     <name>rifasyaBack</name>
     <description>rifasyaBack</description>
 
