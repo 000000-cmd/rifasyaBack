@@ -20,7 +20,6 @@ jobs:
     - name: Build with Maven
       run: mvn clean package
 
-    # Nuevo paso unificado para subir y reiniciar
     - name: Deploy to EC2
       uses: easingthemes/ssh-deploy@main
       with:
@@ -30,12 +29,28 @@ jobs:
         SOURCE: "target/*.jar"
         TARGET: "/home/${{ secrets.EC2_USER }}"
         SCRIPT_AFTER: |
-          echo "--- Reiniciando la aplicación en el servidor ---"
-          PID=$(pgrep -f .jar)
+          echo "--- Despliegue en el servidor iniciado ---"
+          
+          # 1. Detener cualquier proceso Java anterior
+          PID=$(pgrep -f 'java -jar')
           if [ -n "$PID" ]; then
             echo "Deteniendo proceso anterior con PID: $PID"
             kill -9 $PID
           fi
+          
+          # 2. Navegar al directorio de despliegue
           cd /home/${{ secrets.EC2_USER }}
+          
+          # 3. Encontrar el nombre del JAR más reciente que se acaba de subir
+          NEW_JAR=$(ls -t *.jar | head -n 1)
+          echo "El nuevo JAR a ejecutar es: $NEW_JAR"
+          
+          # 4. (Opcional pero recomendado) Limpiar los JARs antiguos
+          # Esto elimina todos los archivos .jar excepto el más reciente
+          ls *.jar | grep -v "$NEW_JAR" | xargs -r rm
+          echo "JARs antiguos eliminados."
+          
+          # 5. Iniciar la nueva versión del JAR por su nombre específico
           echo "Iniciando nueva versión..."
-          nohup java -Xmx1g -jar *.jar > app.log 2>&1 &
+          nohup java -Xmx1g -jar "$NEW_JAR" > app.log 2>&1 &
+          echo "--- Despliegue completado ---"
