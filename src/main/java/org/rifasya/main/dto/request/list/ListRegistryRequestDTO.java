@@ -1,4 +1,4 @@
-package org.rifasya.main.dto.request.listDTO;
+package org.rifasya.main.dto.request.list;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

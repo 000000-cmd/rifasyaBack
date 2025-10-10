@@ -55,6 +55,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/lists/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/locations/**").permitAll()
                         .requestMatchers("/api/thirdparty/create").permitAll()
                         .anyRequest().authenticated()
                 )

@@ -1,7 +1,7 @@
 package org.rifasya.main.controllers;
 
 import jakarta.validation.Valid;
-import org.rifasya.main.dto.request.listDTO.ListTypeRequestDTO;
+import org.rifasya.main.dto.request.list.ListTypeRequestDTO;
 import org.rifasya.main.dto.response.ListTypeResponseDTO;
 import org.rifasya.main.services.*;
 import org.rifasya.main.services.listService.*;

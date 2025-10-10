@@ -3,8 +3,8 @@ package org.rifasya.main.services;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.rifasya.main.dto.request.UserDTO.EmbeddedUserRequestDTO;
-import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
+import org.rifasya.main.dto.request.User.EmbeddedUserRequestDTO;
+import org.rifasya.main.dto.response.User.UserResponseDTO;
 import org.rifasya.main.entities.User;
 import org.rifasya.main.entities.UserRole;
 import org.rifasya.main.entities.listEntities.ListRole;

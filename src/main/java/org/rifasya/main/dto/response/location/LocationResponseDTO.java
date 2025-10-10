@@ -1,4 +1,4 @@
-package org.rifasya.main.dto.response.locationDTO;
+package org.rifasya.main.dto.response.location;
 
 public class LocationResponseDTO {
     private String country;

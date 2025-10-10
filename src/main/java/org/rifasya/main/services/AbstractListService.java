@@ -1,6 +1,6 @@
 package org.rifasya.main.services;
 
-import org.rifasya.main.dto.request.listDTO.ListTypeRequestDTO;
+import org.rifasya.main.dto.request.list.ListTypeRequestDTO;
 import org.rifasya.main.dto.response.ListTypeResponseDTO;
 import org.rifasya.main.exceptions.ResourceNotFoundException;
 import org.rifasya.main.mappers.ListMapper;

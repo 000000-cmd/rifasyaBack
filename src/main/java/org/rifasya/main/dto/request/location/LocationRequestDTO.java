@@ -1,4 +1,4 @@
-package org.rifasya.main.dto.request.locationDTO;
+package org.rifasya.main.dto.request.location;
 
 import jakarta.validation.constraints.NotBlank;
 

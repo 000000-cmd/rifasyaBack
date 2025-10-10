@@ -1,6 +1,6 @@
 package org.rifasya.main.services;
 
-import org.rifasya.main.dto.request.listDTO.ListRegistryRequestDTO;
+import org.rifasya.main.dto.request.list.ListRegistryRequestDTO;
 import org.rifasya.main.dto.response.ListRegistryResponseDTO;
 import org.rifasya.main.entities.meta.ListRegistry;
 import org.rifasya.main.exceptions.ResourceNotFoundException;

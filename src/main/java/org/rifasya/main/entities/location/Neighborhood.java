@@ -96,4 +96,6 @@ public class Neighborhood {
     public void setAuditDate(LocalDateTime auditDate) {
         this.auditDate = auditDate;
     }
+
+
 }

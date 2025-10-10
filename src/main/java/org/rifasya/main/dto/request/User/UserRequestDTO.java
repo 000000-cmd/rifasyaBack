@@ -1,4 +1,4 @@
-package org.rifasya.main.dto.request.UserDTO;
+package org.rifasya.main.dto.request.User;
 
 import jakarta.validation.constraints.NotBlank;
 

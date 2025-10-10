@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.rifasya.main.dto.request.UserDTO.EmbeddedUserRequestDTO;
-import org.rifasya.main.dto.request.locationDTO.LocationRequestDTO;
+import org.rifasya.main.dto.request.User.EmbeddedUserRequestDTO;
+import org.rifasya.main.dto.request.location.LocationRequestDTO;
 
 import java.time.LocalDate;
 

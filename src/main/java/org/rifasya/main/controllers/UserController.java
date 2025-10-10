@@ -1,9 +1,8 @@
 package org.rifasya.main.controllers;
 
 import jakarta.validation.Valid;
-import org.rifasya.main.dto.request.UserDTO.EmbeddedUserRequestDTO;
-import org.rifasya.main.dto.request.UserDTO.UserRequestDTO;
-import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
+import org.rifasya.main.dto.request.User.EmbeddedUserRequestDTO;
+import org.rifasya.main.dto.response.User.UserResponseDTO;
 import org.rifasya.main.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

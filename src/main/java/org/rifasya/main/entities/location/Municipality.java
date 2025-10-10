@@ -3,7 +3,7 @@ package org.rifasya.main.entities.location;
 import jakarta.persistence.*;
 import org.rifasya.main.entities.User;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "municipalities")
@@ -32,6 +32,14 @@ public class Municipality {
 
     @Column(name = "AuditDate", nullable = false)
     private LocalDateTime auditDate;
+
+    @OneToMany(
+            mappedBy = "municipality",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
+    private Set<Neighborhood> neighborhoods = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {
@@ -95,5 +103,13 @@ public class Municipality {
 
     public void setAuditDate(LocalDateTime auditDate) {
         this.auditDate = auditDate;
+    }
+
+    public Set<Neighborhood> getNeighborhoods() {
+        return neighborhoods;
+    }
+
+    public void setNeighborhoods(Set<Neighborhood> neighborhoods) {
+        this.neighborhoods = neighborhoods;
     }
 }

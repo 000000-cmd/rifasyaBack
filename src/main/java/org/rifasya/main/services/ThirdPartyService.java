@@ -2,10 +2,10 @@ package org.rifasya.main.services;
 
 import jakarta.transaction.Transactional;
 import org.rifasya.main.dto.request.ThirdPartyRequestDTO;
-import org.rifasya.main.dto.request.UserDTO.EmbeddedUserRequestDTO;
-import org.rifasya.main.dto.response.locationDTO.LocationResponseDTO;
+import org.rifasya.main.dto.request.User.EmbeddedUserRequestDTO;
+import org.rifasya.main.dto.response.location.LocationResponseDTO;
 import org.rifasya.main.dto.response.ThirdPartyResponseDTO;
-import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
+import org.rifasya.main.dto.response.User.UserResponseDTO;
 import org.rifasya.main.entities.ThirdParty;
 import org.rifasya.main.entities.User;
 import org.rifasya.main.exceptions.BadRequestException;
@@ -29,7 +29,7 @@ public class ThirdPartyService {
 
     private final UserService userService;
     private final ThirdPartyRepository thirdPartyRepository;
-    private final ThirdPartyLocationService locationService;
+    private final LocationService locationService;
     private final UserRepository userRepository;
     private final ThirdPartyMapper thirdPartyMapper;
     private final UserMapper userMapper;
@@ -39,7 +39,7 @@ public class ThirdPartyService {
     private final NeighborhoodRepository neighborhoodRepository;
 
 
-    public ThirdPartyService(UserService userService, ThirdPartyRepository thirdPartyRepository, ThirdPartyLocationService locationService, UserRepository userRepository, ThirdPartyMapper thirdPartyMapper, UserMapper userMapper, ListDocumentTypeRepository docTypeRepo, ListGenderTypeRepository genderTypeRepo, ListMapper listMapper, NeighborhoodRepository neighborhoodRepository) {
+    public ThirdPartyService(UserService userService, ThirdPartyRepository thirdPartyRepository, LocationService locationService, UserRepository userRepository, ThirdPartyMapper thirdPartyMapper, UserMapper userMapper, ListDocumentTypeRepository docTypeRepo, ListGenderTypeRepository genderTypeRepo, ListMapper listMapper, NeighborhoodRepository neighborhoodRepository) {
         this.userService = userService;
         this.thirdPartyRepository = thirdPartyRepository;
         this.locationService = locationService;
@@ -79,7 +79,7 @@ public class ThirdPartyService {
         thirdPartyEntity.setUserAudit(userEntity);
         thirdPartyEntity = thirdPartyRepository.save(thirdPartyEntity);
 
-        locationService.addOrUpdateLocation(thirdPartyEntity.getId(), dto.getLocation(), userEntity);
+        locationService.addOrUpdateLocationToThirdParty(thirdPartyEntity.getId(), dto.getLocation(), userEntity);
 
         ThirdPartyModel finalThirdPartyModel = thirdPartyMapper.entityToModel(thirdPartyEntity);
         ThirdPartyResponseDTO responseDTO =
@@ -104,6 +104,5 @@ public class ThirdPartyService {
         }).orElseThrow(() -> new ResourceNotFoundException("El barrio/vereda con código '" + neighborhoodCode + "' no fue encontrado al construir la respuesta."));
     }
 }
-
 
 

@@ -1,4 +1,4 @@
-package org.rifasya.main.dto.response.UserDTO;
+package org.rifasya.main.dto.response.User;
 
 import java.util.UUID;
 

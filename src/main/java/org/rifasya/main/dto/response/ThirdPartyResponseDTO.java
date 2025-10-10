@@ -1,11 +1,9 @@
 package org.rifasya.main.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.rifasya.main.dto.response.UserDTO.UserResponseDTO;
-import org.rifasya.main.dto.response.locationDTO.LocationResponseDTO;
+import org.rifasya.main.dto.response.User.UserResponseDTO;
+import org.rifasya.main.dto.response.location.LocationResponseDTO;
 
 import java.time.LocalDate;
 import java.util.UUID;
