@@ -1,19 +1,21 @@
 package org.rifasya.main.services;
 
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.rifasya.main.dto.request.User.EmbeddedUserRequestDTO;
 import org.rifasya.main.dto.response.User.UserResponseDTO;
 import org.rifasya.main.entities.User;
 import org.rifasya.main.entities.UserRole;
-import org.rifasya.main.entities.listEntities.ListRole;
+import org.rifasya.main.entities.listEntities.lists.ListRole;
 import org.rifasya.main.exceptions.DuplicateResourceException;
 import org.rifasya.main.exceptions.ResourceNotFoundException;
 import org.rifasya.main.mappers.UserMapper;
 import org.rifasya.main.models.UserModel;
 import org.rifasya.main.repositories.UserRepository;
 import org.rifasya.main.repositories.listRepositories.ListRoleRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -66,5 +68,22 @@ public class UserService {
 
         userModel = userMapper.entityToModel(userEntity);
         return userMapper.modelToResponseDTO(userModel);
+    }
+
+    @Transactional(readOnly = true)
+    public User getCurrentAuthenticatedUser() {
+        // 1. Obtenemos el objeto 'principal' del contexto de seguridad.
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        // 2. Usamos el username para buscar al usuario completo en la base de datos.
+        return userRepo.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario autenticado no encontrado en la base de datos: " + username));
     }
 }

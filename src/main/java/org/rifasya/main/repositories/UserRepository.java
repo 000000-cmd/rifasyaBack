@@ -46,27 +46,4 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     boolean existsByEmail(String mail);
 
-    default LoginResponseDTO toLoginResponseDTO(User user, ThirdParty thirdParty) {
-        if (user == null) return null;
-
-        LoginResponseDTO dto = new LoginResponseDTO();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        dto.setEmail(user.getEmail());
-
-        if (thirdParty != null) {
-            dto.setName(thirdParty.getFirstName() + " " + thirdParty.getFirstLastName());
-        } else {
-            dto.setName(user.getUsername());
-        }
-
-        if (user.getRoles() != null) {
-            dto.setRoles(user.getRoles().stream()
-                    .map(userRole -> userRole.getRole().getCode())
-                    .collect(Collectors.toList()));
-        }
-
-        return dto;
-    }
-
 }

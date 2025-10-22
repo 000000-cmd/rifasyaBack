@@ -1,10 +1,14 @@
 package org.rifasya.main.controllers;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.rifasya.main.components.ListServiceFactory;
 import org.rifasya.main.dto.request.list.ListTypeRequestDTO;
+import org.rifasya.main.dto.response.ListRegistryResponseDTO;
 import org.rifasya.main.dto.response.ListTypeResponseDTO;
-import org.rifasya.main.services.*;
-import org.rifasya.main.services.listService.*;
+import org.rifasya.main.exceptions.ResourceNotFoundException;
+import org.rifasya.main.services.ListRegistryService;
+import org.rifasya.main.services.AbstractListService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,112 +16,90 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Controlador REST para gestionar de forma dinámica todas las entidades de tipo "lista".
+ * Utiliza un ListServiceFactory para delegar las operaciones al servicio correspondiente
+ * basándose en el nombre de la lista proporcionado en la URL.
+ */
+@Slf4j
 @RestController
 @RequestMapping("/api/lists")
 public class ListController {
 
-    // Injection of all list services
-    private final ListCategoryService categoryService;
-    private final ListDocumentTypeService documentTypeService;
-    private final ListGenderTypeService genderTypeService;
-    private final ListRoleService roleTypeService;
-    private final ListExternalLotteryService externalLotteryService;
-    private final ListDrawMethodService drawMethodService;
-    private final ListRaffleModelService raffleModelService;
-    private final ListPrizeTypeService prizeTypeService;
-    private final ListRaffleRuleService raffleRuleService;
+    /**
+     * El factory se encarga de proveer la instancia de servicio correcta (Category, DocumentType, etc.).
+     */
+    private final ListServiceFactory serviceFactory;
 
-    public ListController(ListCategoryService cs, ListDocumentTypeService dts, ListGenderTypeService gts, ListRoleService rts, ListExternalLotteryService els, ListDrawMethodService dms, ListRaffleModelService rms, ListPrizeTypeService pts, ListRaffleRuleService rrs) {
-        this.categoryService = cs;
-        this.documentTypeService = dts;
-        this.genderTypeService = gts;
-        this.roleTypeService = rts;
-        this.externalLotteryService = els;
-        this.drawMethodService = dms;
-        this.raffleModelService = rms;
-        this.prizeTypeService = pts;
-        this.raffleRuleService = rrs;
+    /**
+     * El servicio para gestionar los metadatos de las listas (el registro de listas).
+     */
+    private final ListRegistryService listRegistryService;
+
+    /**
+     * El constructor ahora es mucho más simple. Solo necesita el factory y el servicio de registro.
+     * Ya no es necesario inyectar cada servicio de lista individualmente.
+     */
+    public ListController(ListServiceFactory serviceFactory, ListRegistryService listRegistryService) {
+        this.serviceFactory = serviceFactory;
+        this.listRegistryService = listRegistryService;
     }
 
-    // --- Generic helper methods for the endpoints ---
-    private ResponseEntity<List<ListTypeResponseDTO>> getAll(AbstractListService<?, ?, ?> service) {
-        return ResponseEntity.ok(service.findAll());
+    /**
+     * Método de ayuda privado que utiliza el factory para obtener el servicio
+     * correspondiente al {listName} de la URL.
+     * Si no se encuentra, lanza una excepción ResourceNotFoundException.
+     */
+    private AbstractListService<?, ?, ?> getServiceOrThrow(String listName) {
+        return serviceFactory.getService(listName)
+                .orElseThrow(() -> new ResourceNotFoundException("La lista '" + listName + "' no es válida o no existe."));
     }
-    private ResponseEntity<ListTypeResponseDTO> getById(AbstractListService<?, ?, ?> service, UUID id) {
-        return ResponseEntity.ok(service.findById(id));
+
+    // --- ENDPOINTS CRUD 100% DINÁMICOS ---
+    // Estos 6 endpoints ahora manejan TODAS las operaciones para CUALQUIER tipo de lista.
+
+    @GetMapping("/{listName}")
+    public ResponseEntity<List<ListTypeResponseDTO>> getAll(@PathVariable String listName) {
+        return ResponseEntity.ok(getServiceOrThrow(listName).findAll());
     }
-    private ResponseEntity<ListTypeResponseDTO> create(AbstractListService<?, ?, ?> service, ListTypeRequestDTO dto) {
-        return new ResponseEntity<>(service.create(dto), HttpStatus.CREATED);
+
+    @GetMapping("/{listName}/{id}")
+    public ResponseEntity<ListTypeResponseDTO> getById(@PathVariable String listName, @PathVariable UUID id) {
+        return ResponseEntity.ok(getServiceOrThrow(listName).findById(id));
     }
-    private ResponseEntity<ListTypeResponseDTO> update(AbstractListService<?, ?, ?> service, UUID id, ListTypeRequestDTO dto) {
-        return ResponseEntity.ok(service.update(id, dto));
+
+    @PostMapping("/{listName}")
+    public ResponseEntity<ListTypeResponseDTO> create(@PathVariable String listName, @Valid @RequestBody ListTypeRequestDTO dto) {
+        return new ResponseEntity<>(getServiceOrThrow(listName).create(dto), HttpStatus.CREATED);
     }
-    private ResponseEntity<Void> delete(AbstractListService<?, ?, ?> service, UUID id) {
-        service.delete(id);
+
+    @PutMapping("/{listName}/{id}")
+    public ResponseEntity<ListTypeResponseDTO> update(@PathVariable String listName, @PathVariable UUID id, @Valid @RequestBody ListTypeRequestDTO dto) {
+        return ResponseEntity.ok(getServiceOrThrow(listName).update(id, dto));
+    }
+
+    @DeleteMapping("/{listName}/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String listName, @PathVariable UUID id) {
+        getServiceOrThrow(listName).delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    // --- CRUD for Categories (/api/lists/categories) ---
-    @GetMapping("/categories") public ResponseEntity<List<ListTypeResponseDTO>> getAllCategories() { return getAll(categoryService); }
-    @GetMapping("/categories/{id}") public ResponseEntity<ListTypeResponseDTO> getCategoryById(@PathVariable UUID id) { return getById(categoryService, id); }
-    @PostMapping("/categories") public ResponseEntity<ListTypeResponseDTO> createCategory(@Valid @RequestBody ListTypeRequestDTO dto) { return create(categoryService, dto); }
-    @PutMapping("/categories/{id}") public ResponseEntity<ListTypeResponseDTO> updateCategory(@PathVariable UUID id, @Valid @RequestBody ListTypeRequestDTO dto) { return update(categoryService, id, dto); }
-    @DeleteMapping("/categories/{id}") public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) { return delete(categoryService, id); }
+    @PatchMapping("/{listName}/reorder")
+    public ResponseEntity<Void> reorder(@PathVariable String listName, @RequestBody List<UUID> orderedIds) {
+        getServiceOrThrow(listName).updateOrder(orderedIds);
+        return ResponseEntity.ok().build();
+    }
 
-    // --- CRUD for Document Types (/api/lists/document-types) ---
-    @GetMapping("/documenttypes") public ResponseEntity<List<ListTypeResponseDTO>> getAllDocumentTypes() { return getAll(documentTypeService); }
-    @GetMapping("/documenttypes/{id}") public ResponseEntity<ListTypeResponseDTO> getDocumentTypeById(@PathVariable UUID id) { return getById(documentTypeService, id); }
-    @PostMapping("/documenttypes") public ResponseEntity<ListTypeResponseDTO> createDocumentType(@Valid @RequestBody ListTypeRequestDTO dto) { return create(documentTypeService, dto); }
-    @PutMapping("/documenttypes/{id}") public ResponseEntity<ListTypeResponseDTO> updateDocumentType(@PathVariable UUID id, @Valid @RequestBody ListTypeRequestDTO dto) { return update(documentTypeService, id, dto); }
-    @DeleteMapping("/documenttypes/{id}") public ResponseEntity<Void> deleteDocumentType(@PathVariable UUID id) { return delete(documentTypeService, id); }
+    // --- Endpoints para el Registro de Listas (Metadata) ---
+    // Estos se mantienen ya que gestionan una entidad diferente.
 
-    // --- CRUD for Gender Types (/api/lists/gender-types) ---
-    @GetMapping("/gendertypes") public ResponseEntity<List<ListTypeResponseDTO>> getAllGenderTypes() { return getAll(genderTypeService); }
-    @GetMapping("/gendertypes/{id}") public ResponseEntity<ListTypeResponseDTO> getGenderTypeById(@PathVariable UUID id) { return getById(genderTypeService, id); }
-    @PostMapping("/gendertypes") public ResponseEntity<ListTypeResponseDTO> createGenderType(@Valid @RequestBody ListTypeRequestDTO dto) { return create(genderTypeService, dto); }
-    @PutMapping("/gendertypes/{id}") public ResponseEntity<ListTypeResponseDTO> updateGenderType(@PathVariable UUID id, @Valid @RequestBody ListTypeRequestDTO dto) { return update(genderTypeService, id, dto); }
-    @DeleteMapping("/gendertypes/{id}") public ResponseEntity<Void> deleteGenderType(@PathVariable UUID id) { return delete(genderTypeService, id); }
+    @GetMapping("/listregistry")
+    public ResponseEntity<List<ListRegistryResponseDTO>> getAllListRegistry() {
+        return ResponseEntity.ok(listRegistryService.findAll());
+    }
 
-    // --- CRUD for Role Types (/api/lists/role-types) ---
-    @GetMapping("/roletypes") public ResponseEntity<List<ListTypeResponseDTO>> getAllRoleTypes() { return getAll(roleTypeService); }
-    @GetMapping("/roletypes/{id}") public ResponseEntity<ListTypeResponseDTO> getRoleTypeById(@PathVariable UUID id) { return getById(roleTypeService, id); }
-    @PostMapping("/roletypes") public ResponseEntity<ListTypeResponseDTO> createRoleType(@Valid @RequestBody ListTypeRequestDTO dto) { return create(roleTypeService, dto); }
-    @PutMapping("/roletypes/{id}") public ResponseEntity<ListTypeResponseDTO> updateRoleType(@PathVariable UUID id, @Valid @RequestBody ListTypeRequestDTO dto) { return update(roleTypeService, id, dto); }
-    @DeleteMapping("/roletypes/{id}") public ResponseEntity<Void> deleteRoleType(@PathVariable UUID id) { return delete(roleTypeService, id); }
-
-    // --- CRUD for External Lotteries (/api/lists/external-lotteries) ---
-    @GetMapping("/externallotteries") public ResponseEntity<List<ListTypeResponseDTO>> getAllExternalLotteries() { return getAll(externalLotteryService); }
-    @GetMapping("/externallotteries/{id}") public ResponseEntity<ListTypeResponseDTO> getExternalLotteryById(@PathVariable UUID id) { return getById(externalLotteryService, id); }
-    @PostMapping("/externallotteries") public ResponseEntity<ListTypeResponseDTO> createExternalLottery(@Valid @RequestBody ListTypeRequestDTO dto) { return create(externalLotteryService, dto); }
-    @PutMapping("/externallotteries/{id}") public ResponseEntity<ListTypeResponseDTO> updateExternalLottery(@PathVariable UUID id, @Valid @RequestBody ListTypeRequestDTO dto) { return update(externalLotteryService, id, dto); }
-    @DeleteMapping("/externallotteries/{id}") public ResponseEntity<Void> deleteExternalLottery(@PathVariable UUID id) { return delete(externalLotteryService, id); }
-
-    // --- CRUD for Draw Methods (/api/lists/draw-methods) ---
-    @GetMapping("/drawmethods") public ResponseEntity<List<ListTypeResponseDTO>> getAllDrawMethods() { return getAll(drawMethodService); }
-    @GetMapping("/drawmethods/{id}") public ResponseEntity<ListTypeResponseDTO> getDrawMethodById(@PathVariable UUID id) { return getById(drawMethodService, id); }
-    @PostMapping("/drawmethods") public ResponseEntity<ListTypeResponseDTO> createDrawMethod(@Valid @RequestBody ListTypeRequestDTO dto) { return create(drawMethodService, dto); }
-    @PutMapping("/drawmethods/{id}") public ResponseEntity<ListTypeResponseDTO> updateDrawMethod(@PathVariable UUID id, @Valid @RequestBody ListTypeRequestDTO dto) { return update(drawMethodService, id, dto); }
-    @DeleteMapping("/drawmethods/{id}") public ResponseEntity<Void> deleteDrawMethod(@PathVariable UUID id) { return delete(drawMethodService, id); }
-
-    // --- CRUD for Raffle Models (/api/lists/raffle-models) ---
-    @GetMapping("/rafflemodels") public ResponseEntity<List<ListTypeResponseDTO>> getAllRaffleModels() { return getAll(raffleModelService); }
-    @GetMapping("/rafflemodels/{id}") public ResponseEntity<ListTypeResponseDTO> getRaffleModelById(@PathVariable UUID id) { return getById(raffleModelService, id); }
-    @PostMapping("/rafflemodels") public ResponseEntity<ListTypeResponseDTO> createRffleModel(@Valid @RequestBody ListTypeRequestDTO dto) { return create(raffleModelService, dto); }
-    @PutMapping("/rafflemodels/{id}") public ResponseEntity<ListTypeResponseDTO> updateRaffleModel(@PathVariable UUID id, @Valid @RequestBody ListTypeRequestDTO dto) { return update(raffleModelService, id, dto); }
-    @DeleteMapping("/rafflemodels/{id}") public ResponseEntity<Void> deleteRaffleModel(@PathVariable UUID id) { return delete(raffleModelService, id); }
-
-    // --- CRUD for Prize Types (/api/lists/prize-types) ---
-    @GetMapping("/prizetypes") public ResponseEntity<List<ListTypeResponseDTO>> getAllPrizeTypes() { return getAll(prizeTypeService); }
-    @GetMapping("/prizetypes/{id}") public ResponseEntity<ListTypeResponseDTO> getPrizeTypeById(@PathVariable UUID id) { return getById(prizeTypeService, id); }
-    @PostMapping("/prizetypes") public ResponseEntity<ListTypeResponseDTO> createPrizeType(@Valid @RequestBody ListTypeRequestDTO dto) { return create(prizeTypeService, dto); }
-    @PutMapping("/prizetypes/{id}") public ResponseEntity<ListTypeResponseDTO> updatePrizeType(@PathVariable UUID id, @Valid @RequestBody ListTypeRequestDTO dto) { return update(prizeTypeService, id, dto); }
-    @DeleteMapping("/prizetypes/{id}") public ResponseEntity<Void> deletePrizeType(@PathVariable UUID id) { return delete(prizeTypeService, id); }
-
-    // --- CRUD for Raffle Rules (/api/lists/raffle-rules) ---
-    @GetMapping("/rafflerules") public ResponseEntity<List<ListTypeResponseDTO>> getAllRaffleRules() { return getAll(raffleRuleService); }
-    @GetMapping("/rafflerules/{id}") public ResponseEntity<ListTypeResponseDTO> getRaffleRuleById(@PathVariable UUID id) { return getById(raffleRuleService, id); }
-    @PostMapping("/rafflerules") public ResponseEntity<ListTypeResponseDTO> createRaffleRule(@Valid @RequestBody ListTypeRequestDTO dto) { return create(raffleRuleService, dto); }
-    @PutMapping("/rafflerules/{id}") public ResponseEntity<ListTypeResponseDTO> updateRaffleRule(@PathVariable UUID id, @Valid @RequestBody ListTypeRequestDTO dto) { return update(raffleRuleService, id, dto); }
-    @DeleteMapping("/rafflerules/{id}") public ResponseEntity<Void> deleteRaffleRule(@PathVariable UUID id) { return delete(raffleRuleService, id); }
+    @GetMapping("/listregistry/{id}")
+    public ResponseEntity<ListRegistryResponseDTO> getListRegistryById(@PathVariable UUID id) {
+        return ResponseEntity.ok(listRegistryService.findById(id));
+    }
 }
-

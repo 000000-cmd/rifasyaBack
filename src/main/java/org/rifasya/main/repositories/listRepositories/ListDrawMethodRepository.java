@@ -1,6 +1,6 @@
 package org.rifasya.main.repositories.listRepositories;
 
-import org.rifasya.main.entities.listEntities.ListDrawMethod;
+import org.rifasya.main.entities.listEntities.lists.ListDrawMethod;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

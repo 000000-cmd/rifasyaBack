@@ -2,7 +2,7 @@ package org.rifasya.main.services.listService;
 
 import org.rifasya.main.dto.request.list.ListTypeRequestDTO;
 import org.rifasya.main.dto.response.ListTypeResponseDTO;
-import org.rifasya.main.entities.listEntities.ListGenderType;
+import org.rifasya.main.entities.listEntities.lists.ListGenderType;
 import org.rifasya.main.mappers.ListMapper;
 import org.rifasya.main.repositories.listRepositories.ListGenderTypeRepository;
 import org.rifasya.main.services.AbstractListService;

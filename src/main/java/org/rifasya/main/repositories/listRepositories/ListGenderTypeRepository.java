@@ -1,7 +1,7 @@
 package org.rifasya.main.repositories.listRepositories;
 
 
-import org.rifasya.main.entities.listEntities.ListGenderType;
+import org.rifasya.main.entities.listEntities.lists.ListGenderType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

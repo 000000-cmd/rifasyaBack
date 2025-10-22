@@ -2,7 +2,7 @@ package org.rifasya.main.entities;
 
 import jakarta.persistence.*;
 import java.util.UUID;
-import org.rifasya.main.entities.listEntities.ListRole;
+import org.rifasya.main.entities.listEntities.lists.ListRole;
 
 @Entity
 @Table(name = "userroles")

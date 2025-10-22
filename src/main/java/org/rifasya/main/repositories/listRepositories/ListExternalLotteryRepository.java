@@ -1,6 +1,6 @@
 package org.rifasya.main.repositories.listRepositories;
 
-import org.rifasya.main.entities.listEntities.ListExternalLottery;
+import org.rifasya.main.entities.listEntities.lists.ListExternalLottery;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

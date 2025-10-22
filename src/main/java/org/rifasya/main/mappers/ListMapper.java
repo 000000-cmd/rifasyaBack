@@ -7,7 +7,7 @@ import org.rifasya.main.dto.request.list.ListRegistryRequestDTO;
 import org.rifasya.main.dto.request.list.ListTypeRequestDTO;
 import org.rifasya.main.dto.response.ListRegistryResponseDTO;
 import org.rifasya.main.dto.response.ListTypeResponseDTO;
-import org.rifasya.main.entities.listEntities.*;
+import org.rifasya.main.entities.listEntities.lists.*;
 import org.rifasya.main.entities.meta.ListRegistry;
 import org.rifasya.main.repositories.listRepositories.ListDocumentTypeRepository;
 import org.rifasya.main.repositories.listRepositories.ListGenderTypeRepository;

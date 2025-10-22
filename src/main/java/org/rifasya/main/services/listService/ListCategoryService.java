@@ -2,7 +2,7 @@ package org.rifasya.main.services.listService;
 
 import org.rifasya.main.dto.request.list.ListTypeRequestDTO;
 import org.rifasya.main.dto.response.ListTypeResponseDTO;
-import org.rifasya.main.entities.listEntities.ListCategory;
+import org.rifasya.main.entities.listEntities.lists.ListCategory;
 import org.rifasya.main.mappers.ListMapper;
 import org.rifasya.main.repositories.listRepositories.ListCategoryRepository;
 import org.rifasya.main.services.AbstractListService;

@@ -1,6 +1,6 @@
 package org.rifasya.main.repositories.listRepositories;
 
-import org.rifasya.main.entities.listEntities.ListCategory;
+import org.rifasya.main.entities.listEntities.lists.ListCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;

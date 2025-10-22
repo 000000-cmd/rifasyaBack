@@ -1,11 +1,10 @@
 package org.rifasya.main.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
-import org.rifasya.main.entities.listEntities.ListDocumentType;
-import org.rifasya.main.entities.listEntities.ListGenderType;
+import org.rifasya.main.entities.listEntities.lists.ListDocumentType;
+import org.rifasya.main.entities.listEntities.lists.ListGenderType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
